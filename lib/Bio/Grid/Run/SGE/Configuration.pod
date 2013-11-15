@@ -1,0 +1,49 @@
+=pod
+
+=encoding utf8
+
+=head1 Configuration
+
+=head2 Options
+
+=head3 Reseved configuration options
+
+Here is a list of reserved configuration options:
+
+
+  $c = {
+    cmd => ...,
+    script_dir => ...
+    no_post_task => ...,
+    tmp_dir => ...,
+    stderr_dir => ...,
+    stdout_dir => ...,
+    result_dir => ...,
+    log_dir => ...,
+    idx_dir => ...,
+    test => ...,
+    mail => ...,
+    smtp_server => ...,
+    no_prompt => ...,
+    lib => ...,
+    input => ...,
+    extra => ...,
+    parts => ...,
+    combinations_per_job => ...,
+    job_name => ...,
+    job_id => ...,
+    mode => ...,
+    _worker_config_file => ...,
+    _worker_env_script => ...,
+    submit_bin => ...,
+    submit_params => ...,
+    perl_bin => ...,
+    working_dir => ...,
+    iterator => ...,
+
+    args => ...,
+  };
+
+The attribute C<args> is special, normally the main executable is hard-coded in the cl_* script,
+but the arguments are changing per configuration. Therefore
+L<Bio::Grid::Run::SGE::Master> provides the convenience attribute C<< $c->{args} >>
