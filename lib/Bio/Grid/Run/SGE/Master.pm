@@ -234,7 +234,7 @@ sub _build__worker_config_file {
 
 sub _build__worker_env_script {
   my $self = shift;
-  return File::Spec->catfile( $self->tmp_dir, join( '', $self->job_name, '.env.pl' ) );
+  return File::Spec->catfile( $self->tmp_dir, join( '.', 'env',$self->job_name, 'pl' ) );
 }
 
 sub generate_idx_file_name {
