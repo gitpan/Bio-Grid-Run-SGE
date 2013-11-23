@@ -103,7 +103,7 @@ is_deeply(
     '-N', 'cluster_job',
     '-e', catfile( $td, 'tmp/err' ),
     '-o', catfile( $td, 'tmp/out' ),
-    catfile( $td, 'tmp/cluster_job.env.pl' ), 't/Bio-Grid-Run-SGE-Master.script.pl',
+    catfile( $td, 'tmp/env.cluster_job.pl' ), 't/Bio-Grid-Run-SGE-Master.script.pl',
     '--worker', catfile( $td, 'tmp/cluster_job.config.dat' )
   ]
 );

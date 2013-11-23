@@ -196,8 +196,9 @@ sub _mrproper_job {
   return;
 }
 
+1;
+
 =head1 NAME
 
 Bio::Grid::Run::SGE - Distribute (biological) analyses on the local SGE grid
 
-1;

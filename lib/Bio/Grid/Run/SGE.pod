@@ -72,7 +72,7 @@ L<DESCRIPTION> for more info.
 
 =item 1. Install L<Bio::Grid::Run::SGE> from CPAN
 
-=item 2. create a global config file F<$HOME/.bgrsge.conf>
+=item 2. create a global config file F<$HOME/.bio-grid-run-sge.conf>
 
 =item 3. Do the stuff in L</SYNOPSIS>
 

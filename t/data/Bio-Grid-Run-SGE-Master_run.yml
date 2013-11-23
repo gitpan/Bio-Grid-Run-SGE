@@ -11,7 +11,7 @@ input:
   format: General
   sep: ^>
 job_cmd: t/Bio-Grid-Run-SGE-Master.qsub.pl -t 1-45 -S PERL -N cluster_job -e /tmp/lXGH5pgD5r/tmp/err
-  -o /tmp/lXGH5pgD5r/tmp/out /tmp/lXGH5pgD5r/tmp/cluster_job.env.pl t/Bio-Grid-Run-SGE-Master.script.pl --worker /tmp/lXGH5pgD5r/master_config
+  -o /tmp/lXGH5pgD5r/tmp/out /tmp/lXGH5pgD5r/tmp/env.cluster_job.pl t/Bio-Grid-Run-SGE-Master.script.pl --worker /tmp/lXGH5pgD5r/master_config
 job_name: cluster_job
 mode: Dummy
 num_comb: 45
