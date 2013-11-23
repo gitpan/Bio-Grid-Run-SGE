@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More;    # skip_all => 'no pod coverage checks';
+use Test::More skip_all => 'no pod coverage checks';
 
 # Ensure a recent version of Test::Pod::Coverage
 my $min_tpc = 1.08;
