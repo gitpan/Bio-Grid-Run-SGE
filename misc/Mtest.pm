@@ -8,8 +8,9 @@ use Config::Auto;
 use Data::Dumper;
 use Bio::Grid::Run::SGE::Util qw/my_glob my_sys expand_path my_mkdir expand_path_rel/;
 use Cwd;
-use Gonzales::Util::YAML;
 use Config;
+use Bio::Gonzales::Util::Cerial;
+
 
 use Mouse;
 our $VERSION = 0.01_01;

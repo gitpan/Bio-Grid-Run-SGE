@@ -5,7 +5,7 @@ use strict;
 use Carp;
 use File::Spec;
 use Cwd;
-use Gonzales::Util::Cerial;
+use Bio::Gonzales::Util::Cerial;
 
 use 5.010;
 

@@ -4,8 +4,10 @@ use Mouse;
 
 use warnings;
 use strict;
+use Carp;
 use Storable qw/nstore retrieve/;
 use File::Temp qw/tempdir/;
+use File::Which;
 use File::Spec;
 use Config::Auto;
 use Data::Dumper;
@@ -18,6 +20,7 @@ use Data::Printer colored => 1, use_prototypes => 0;
 use Bio::Gonzales::Util::Cerial;
 use Config;
 use FindBin;
+use Capture::Tiny 'capture';
 
 our $VERSION = 0.01_01;
 our $RC_FILE = "$ENV{HOME}/.bio-grid-run-sge.conf";
@@ -62,7 +65,7 @@ has 'mail'       => ( is => 'rw' );
 has 'smtp_server' => ( is => 'rw' );
 has 'no_prompt'   => ( is => 'rw' );
 has 'lib'         => ( is => 'rw' );
-has 'script_dir' => ( is => 'ro', default => $FindBin::Bin);
+has 'script_dir'  => ( is => 'ro', default => $FindBin::Bin );
 
 has 'input' => ( is => 'rw', isa => 'ArrayRef', default => sub { [] } );
 
@@ -149,6 +152,9 @@ sub BUILD {
 
   #confess "No input given" unless ( @{ $self->input } > 0 );
 
+  my $submit_bin = -f $self->submit_bin ? $self->submit_bin : which( $self->submit_bin );
+  confess "[SUBMIT_ERROR] $submit_bin not found or not executable" unless ( -x $submit_bin );
+
   for my $i ( @{ $self->input } ) {
     #merge different namings to one std. naming: elements
     for my $key (qw/list files/) {
@@ -161,7 +167,7 @@ sub BUILD {
 
   $self->perl_bin( expand_path_rel( $self->perl_bin ) );
 
-  $self->working_dir(File::Spec->rel2abs($self->working_dir));
+  $self->working_dir( File::Spec->rel2abs( $self->working_dir ) );
   confess "working dir does not exist: " . $self->working_dir unless ( -d $self->working_dir );
 
   for my $d (qw/log_dir stderr_dir stdout_dir result_dir tmp_dir idx_dir/) {
@@ -233,7 +239,7 @@ sub _build__worker_config_file {
 
 sub _build__worker_env_script {
   my $self = shift;
-  return File::Spec->catfile( $self->tmp_dir, join( '.', 'env',$self->job_name, 'pl' ) );
+  return File::Spec->catfile( $self->tmp_dir, join( '.', 'env', $self->job_name, 'pl' ) );
 }
 
 sub generate_idx_file_name {
@@ -271,19 +277,33 @@ sub run {
 
   say STDERR "Running: " . $cmd;
 
-  my $res = qx/$cmd/;
-  $res =~ /^Your\s*job(-array)?\s*(\d+)/;
-  $self->job_id($2);
+  # capture from external command
 
-  my $tmp_job_id = -1;
-  $tmp_job_id = $2 if defined $2;
+  my ( $stdout, $stderr, $exit ) = capture {
+    system(@$cmd_args);
+  };
+
+  if ( $exit != 0 ) {
+    confess "[SUBMIT_ERROR] Could not submit job:\n$stdout$stderr";
+  }
+
+  $stdout =~ /^Your\s*job(-array)?\s*(\d+)/;
+
+  unless ( defined $self->job_id ) {
+    if ( defined $2 ) {
+      $self->job_id($2);
+    } else {
+      warn "could not parse job id, using -1 as job id";
+      $self->job_id(-1);
+    }
+  }
 
   open my $main_fh, '>',
-    File::Spec->catfile( $self->log_dir, sprintf( "main.%s.j%s.cmd", $self->job_name, $tmp_job_id ) )
+    File::Spec->catfile( $self->log_dir, sprintf( "main.%s.j%s.cmd", $self->job_name, $self->job_id ) )
     or confess "Can't open filehandle: $!";
   print $main_fh "cd '" . fastcwd . "' && " . $cmd, "\n";
   $main_fh->close;
-  $self->queue_post_task($config_file) if ( $self->job_id );
+  $self->queue_post_task($config_file) if ( $self->job_id >= 0 );
 
   return { config => $c, command => $cmd_args };
 }

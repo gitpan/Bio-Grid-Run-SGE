@@ -17,13 +17,14 @@ my %module_build_args = (
     "Joachim Bargsten <jwb\@cpan.org>"
   ],
   "dist_name" => "Bio-Grid-Run-SGE",
-  "dist_version" => "0.033",
+  "dist_version" => "0.034",
   "license" => "perl",
   "module_name" => "Bio::Grid::Run::SGE",
   "recommends" => {},
   "recursive_test_files" => 1,
   "requires" => {
     "Bio::Gonzales" => 0,
+    "Capture::Tiny" => 0,
     "Clone" => 0,
     "Config::Auto" => 0,
     "Config::IniFiles" => 0,
@@ -34,6 +35,7 @@ my %module_build_args = (
     "File::Next" => 0,
     "File::Slurp" => 0,
     "File::Spec" => 0,
+    "File::Which" => 0,
     "Getopt::Long::Descriptive" => 0,
     "HTTP::Date" => 0,
     "IO::Prompt::Tiny" => 0,

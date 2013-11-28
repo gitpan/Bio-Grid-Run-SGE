@@ -13,7 +13,8 @@ use Bio::Grid::Run::SGE::Util qw/my_glob my_sys expand_path my_mkdir expand_path
 use Cwd;
 use Clone qw/clone/;
 use Data::Printer colored => 1, use_prototypes => 0;
-use Gonzales::Util::YAML;
+use Bio::Gonzales::Util::Cerial;
+
 use Config;
 use Mtest;
 

@@ -7,7 +7,8 @@ use Carp;
 use Data::Dumper;
 
 use Bio::Grid::Run::SGE;
-use Gonzales::Util::Cerial;
+use Bio::Gonzales::Util::Cerial;
+
 use File::Spec;
 
 run_job(

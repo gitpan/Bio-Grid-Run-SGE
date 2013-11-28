@@ -1,12 +1,12 @@
 use warnings;
 use Data::Dumper;
 use Test::More;
-use Gonzales::Util::Cerial qw/yspew yslurp/;
+use Bio::Gonzales::Util::Cerial;
+
 use Storable;
 use File::Temp qw/tempdir/;
 use File::Spec::Functions qw/catfile rel2abs/;
 use Cwd qw/fastcwd/;
-use Gonzales::Util::Cerial;
 
 
 BEGIN { use_ok('Bio::Grid::Run::SGE::Master'); }

@@ -3,7 +3,8 @@ use Test::More;
 use Data::Dumper;
 use File::Temp qw/tempdir/;
 use Bio::Grid::Run::SGE::Util qw/poll_interval/;
-use Gonzales::Util::Cerial;
+use Bio::Gonzales::Util::Cerial;
+
 use File::Spec;
 use File::Slurp qw/read_dir/;
 use List::Util;
