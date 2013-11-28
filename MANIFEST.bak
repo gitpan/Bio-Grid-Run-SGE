@@ -1,0 +1,25 @@
+bin/blast_all-vs-all
+bin/cat_by_regex.pl
+bin/cl_muscle_example.pl
+bin/dummy_worker.pl
+bin/inparanoid_blast_parser.pl
+bin/mail.pl
+bin/mail.sh
+bin/rmrex
+Build.PL
+Changes
+lib/Bio/Grid/Run/SGE.pm
+lib/Bio/Grid/Run/SGE/Index.pm
+lib/Bio/Grid/Run/SGE/Index/General.pm
+lib/Bio/Grid/Run/SGE/Master.pm
+lib/Bio/Grid/Run/SGE/Util.pm
+lib/Bio/Grid/Run/SGE/Worker.pm
+lib/FAlite.pm
+lib/FAlite2.pm
+MANIFEST			This list of files
+README
+scripts/cl_dummy.pl
+scripts/cl_inparanoid_2nd.pl
+scripts/cl_iprscan.pl
+scripts/cl_muscle.pl
+scripts/cl_phyml.pl

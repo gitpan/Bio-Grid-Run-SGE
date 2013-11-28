@@ -32,5 +32,5 @@ sub worker {
 
     open my $fh, '>', $result_file or confess "Can't open filehandle: $!";
     print $fh "$input_file -> $result_file\n";
-    close $fh;
+    $fh->close;
 }

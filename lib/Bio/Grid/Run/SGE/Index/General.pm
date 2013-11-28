@@ -75,7 +75,7 @@ sub create {
     my $chunk_elem_count = 1;
     open my $fh, '<', $f or confess "Can't open filehandle $f: $!";
     unless (<$fh>) {
-      close $fh;
+      $fh->close;
       next;
     }
     while (<$fh>) {
@@ -98,7 +98,7 @@ sub create {
       age       => ( stat $f )[9]
       };
 
-    close $fh;
+    $fh->close;
   }
 
   $self->_internal_info()->{sep} = $self->sep;

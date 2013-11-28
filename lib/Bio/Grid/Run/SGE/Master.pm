@@ -160,17 +160,16 @@ sub BUILD {
   }
 
   $self->perl_bin( expand_path_rel( $self->perl_bin ) );
-  confess "working dir not correct " . $self->working_dir unless ( -d $self->working_dir );
 
-  my $curdir = fastcwd;
-  #chdir $self->working_dir;
-  for my $d (qw/working_dir log_dir stderr_dir stdout_dir result_dir tmp_dir idx_dir/) {
+  $self->working_dir(File::Spec->rel2abs($self->working_dir));
+  confess "working dir does not exist: " . $self->working_dir unless ( -d $self->working_dir );
+
+  for my $d (qw/log_dir stderr_dir stdout_dir result_dir tmp_dir idx_dir/) {
     $self->$d( expand_path( $self->$d ) );
     unless ( -d $self->$d ) {
       my_mkdir( $self->$d );
     }
   }
-  chdir $curdir;
 
   my $m = __PACKAGE__->meta;
 
@@ -283,7 +282,7 @@ sub run {
     File::Spec->catfile( $self->log_dir, sprintf( "main.%s.j%s.cmd", $self->job_name, $tmp_job_id ) )
     or confess "Can't open filehandle: $!";
   print $main_fh "cd '" . fastcwd . "' && " . $cmd, "\n";
-  close $main_fh;
+  $main_fh->close;
   $self->queue_post_task($config_file) if ( $self->job_id );
 
   return { config => $c, command => $cmd_args };
@@ -369,7 +368,7 @@ EOS
   print $fh '  warn "could not run $cmd" unless $return;',           "\n";
   print $fh '}',                                                     "\n";
   print $fh 'exit;',                                                 "\n";
-  close $fh;
+  $fh->close;
 
   return $self->_worker_env_script;
 }
@@ -398,7 +397,7 @@ sub queue_post_task {
 
   open my $post_fh, '>', $post_cmd_file or confess "Can't open filehandle: $!";
   print $post_fh join( " ", "cd", "'" . fastcwd . "'", '&&', @cmd, @post_cmd ), "\n";
-  close $post_fh;
+  $post_fh->close;
 
   chmod 0755, $post_cmd_file;
 
@@ -417,7 +416,7 @@ sub save_config {
   open my $cfg_fh, '>', $cfg_save
     or confess "Can't open filehandle: $!";
   print $cfg_fh Dumper($self);
-  close $cfg_fh;
+  $cfg_fh->close;
 
   return;
 }

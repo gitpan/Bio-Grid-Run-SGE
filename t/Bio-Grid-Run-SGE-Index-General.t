@@ -42,7 +42,7 @@ for my $id (@ids) {
     my $data = $idx->get_elem($id);
     print $r1_fh $data;
 }
-close $r1_fh;
+$r1_fh->close;
 
 is( compare( $range_tmp, 't/data/Bio-Grid-Run-SGE-Index-General.range-44-44-0.ref.fa' ), 0, 'range 44,44,0' );
 
@@ -53,7 +53,7 @@ for my $id (@ids) {
     my $data = $idx->get_elem($id);
     print $range_fh $data;
 }
-close $range_fh;
+$range_fh->close;
 
 isnt( compare( $range_tmp, 't/data/Bio-Grid-Run-SGE-Index-General.range-44-44-0.ref.fa' ),
     0, 'range 44,44,0' );
@@ -67,7 +67,7 @@ for my $id (@ids) {
     my $data = $idx->get_elem($id);
     print $r2_fh $data;
 }
-close $r2_fh;
+$r2_fh->close;
 
 isnt( compare( $range_tmp, 't/data/Bio-Grid-Run-SGE-Index-General.range-44-44-0.ref.fa' ),
     0, 'range 44,44,0' );
@@ -81,7 +81,7 @@ for my $id (@ids) {
     my $data = $idx->get_elem($id);
     print $r3_fh $data;
 }
-close $r3_fh;
+$r3_fh->close;
 
 is( compare( $range_tmp, 't/data/Bio-Grid-Run-SGE-Index-General.range-45-47-2.ref.fa' ), 0, 'range 45,47,2' );
 
@@ -105,7 +105,7 @@ is( $idx->num_elem, 90, "number of elements" );
         my $data = $idx_nosep->get_elem($id);
         print $r_nosep_fh $data;
     }
-    close $r_nosep_fh;
+    $r_nosep_fh->close;
 
     #system("diff -u $rtmp_nosep t/data/Bio-Grid-Run-SGE-Index-General.range-45-47-2.nosep.ref.fa >&2");
     is(
@@ -131,7 +131,7 @@ is( $idx->num_elem, 90, "number of elements" );
         my $data = $idx_nosep->get_elem($id);
         print $r_nosep_fh $data;
     }
-    close $r_nosep_fh;
+    $r_nosep_fh->close;
 
     system("diff -u $rtmp_nosep t/data/Bio-Grid-Run-SGE-Index-General.range-45-47-2.nosep.ref.fa >&2");
     is( compare( $rtmp_nosep, 't/data/Bio-Grid-Run-SGE-Index-General.range-45-47-2.nosep.ref.fa' ),
@@ -155,7 +155,7 @@ is( $idx->num_elem, 90, "number of elements" );
         my $data = $idx_nosep->get_elem($id);
         print $r_nosep_fh $data;
     }
-    close $r_nosep_fh;
+    $r_nosep_fh->close;
 
     is( compare( $rtmp_nosep, 't/data/Bio-Grid-Run-SGE-Index-General.range-45-47-2.nosep.ref.fa' ),
         0, 'nosep end, range 45,47,2' );
@@ -165,7 +165,7 @@ is( $idx->num_elem, 90, "number of elements" );
     my $idx_file_empty = catfile( $td, 'test_empty0.idx' );
     my $empty_tmp      = catfile( $td, "empty0.fa" );
     open my $empty_tmp_fh, '>', $empty_tmp or confess "Can't open filehandle: $!";
-    close $empty_tmp_fh;
+    $empty_tmp_fh->close;
     my $idx_empty = Bio::Grid::Run::SGE::Index::General->new(
         'writeable'  => 1,
         'idx_file'   => $idx_file_empty,
@@ -181,7 +181,7 @@ is( $idx->num_elem, 90, "number of elements" );
     my $idx_file_empty = catfile( $td, 'test_empty1.idx' );
     my $empty_tmp      = catfile( $td, "empty1.fa" );
     open my $empty_tmp_fh, '>', $empty_tmp or confess "Can't open filehandle: $!";
-    close $empty_tmp_fh;
+    $empty_tmp_fh->close;
     my $idx_empty = Bio::Grid::Run::SGE::Index::General->new(
         'writeable'  => 1,
         'idx_file'   => $idx_file_empty,
@@ -219,7 +219,7 @@ for my $id (@ids) {
     my $data = $idx2->get_elem($id);
     print $range_chunky_fh $data;
 }
-close $range_chunky_fh;
+$range_chunky_fh->close;
 
 is( compare( $range_tmp, 't/data/Bio-Grid-Run-SGE-Index-General.range-chunky-0-2.ref.fa' ),
     0, 'range chunky 0 .. 2' );

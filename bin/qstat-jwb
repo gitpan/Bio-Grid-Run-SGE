@@ -12,7 +12,7 @@ my @cmd = ( 'qstat', '-xml', @ARGV );
 open my $fh, '-|', @cmd or die "Can't open filehandle: $!";
 
 my $data = do { local $/; <$fh> };
-close $fh;
+$fh->close;
 
 use XML::LibXML;
 my $doc = XML::LibXML->load_xml( string => $data );

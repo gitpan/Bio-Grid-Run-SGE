@@ -25,7 +25,7 @@ sub do_worker_stuff {
 
 
     }
-    close $result_fh;
-    close $seq_file_fh;
+    $result_fh->close;
+    $seq_file_fh->close;
 }
 

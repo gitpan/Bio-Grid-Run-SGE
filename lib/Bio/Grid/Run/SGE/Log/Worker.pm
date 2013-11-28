@@ -66,7 +66,7 @@ sub to_script {
 
   print $fh join( ' ', $perl, @job_cmd ), "\n";
 
-  close $fh unless $was_open;
+  $fh->close unless $was_open;
 }
 
 __PACKAGE__->meta->make_immutable();

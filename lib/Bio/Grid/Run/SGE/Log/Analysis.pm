@@ -261,7 +261,7 @@ sub write {
 
   open my $cmd_fh, '>', $cmd_f or confess "Can't open filehandle: $!";
   print $cmd_fh join "\n", @{ $self->_cmd_script };
-  close $cmd_fh;
+  $cmd_fh->close;
 
   chmod 0755, $cmd_f;
 
@@ -269,7 +269,7 @@ sub write {
 
   open my $log_fh, '>', $log_f or confess "Can't open filehandle: $!";
   print $log_fh join "\n", @{ $self->_log_report };
-  close $log_fh;
+  $log_fh->close;
 
   #CREATE SCRIPT TO UPDATE RERUN JOBS
   $self->_write_update_script;
@@ -292,7 +292,7 @@ sub _write_update_script {
 
   open my $update_log_fh, '>', $update_log_file or confess "Can't open filehandle: $!";
   print $update_log_fh join( " ", "cd", "'" . $c->{working_dir} . "'", '&&', @post_log_cmd ), "\n";
-  close $update_log_fh;
+  $update_log_fh->close;
 
   chmod 0755, $update_log_file;
 

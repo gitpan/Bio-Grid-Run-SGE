@@ -68,7 +68,7 @@ open my $range_0_100_fh, '>', $range_0_100 or die "Can't open filehandle: $!";
 while ( my $comb = $it_1->next_comb ) {
     print $range_0_100_fh ( split( /\n/, $comb->[0] ) )[0], "\t", ( split( /\n/, $comb->[1] ) )[0], "\n";
 }
-close $range_0_100_fh;
+$range_0_100_fh->close;
 
 my $ref_file = catfile( $tmp_dir, 'range-0-100.ref.fa' );
 open my $ref_fh, '>', $ref_file or die "Can't open filehandle: $!";
@@ -80,7 +80,7 @@ for ( my $i = 0; $total < 100 && $i < @$seqs; $i++ ) {
         $total++;
     }
 }
-close $ref_fh;
+$ref_fh->close;
 
 is( compare( $range_0_100, $ref_file ), 0, 'range 0 .. 100' );
 

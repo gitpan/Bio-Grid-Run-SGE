@@ -27,12 +27,12 @@ our $VERSION = 0.01_01;
   expand_path
   my_mkdir
   concat_files
-  faiterate
   my_sys_non_fatal
   my_glob_non_fatal
   timer
   expand_path_rel
   poll_interval
+  result_files
 );
 
 sub my_glob_non_fatal {
@@ -175,11 +175,11 @@ sub concat_files {
       my $abs_f = catfile( $dir, $f );
       open my $fh, '<', $abs_f or confess "Can't open filehandle for ${f}: $!";
       while ( my $line = <$fh> ) { print $concat_fh $line; }
-      close $fh;
+      $fh->close;
       push @to_be_unlinked, $abs_f;
     }
   }
-  close $concat_fh;
+  $concat_fh->close;
 
   for my $f (@to_be_unlinked) {
     INFO("Deleting $f");
@@ -210,10 +210,26 @@ sub timer {
 }
 
 sub poll_interval {
-  my ($prev_waiting_time ,$max_time) = @_;
+  my ( $prev_waiting_time, $max_time ) = @_;
 
+  return int( min( $max_time, $prev_waiting_time * ( 1.6 + rand() ) ) );
+}
 
-  return int(min($max_time, $prev_waiting_time * (1.6 + rand())));
+sub result_files {
+  my $c = shift;
+
+  my $dir = expand_path( $c->{result_dir} );
+
+  my $file_regex = qr/^\Q$c->{job_name}\E #job name
+                        \.j$c->{job_id} #the job id
+                        \.[0-9]+ #the sge task id
+                        \.t[\-0-9]+(?:\.[\w\-.#]+)? #my task id
+                        (?:\..*)? #suffix
+                        $/x;
+
+  my @paths = map { catfile( $dir, $_ ) } grep { $_ =~ /$file_regex/ } read_dir($dir);
+
+  return \@paths;
 }
 
 1;
@@ -235,7 +251,6 @@ Bio::Grid::Run::SGE::Util - Utility functions for Bio::Grid::Run::SGE
       expand_path
       my_mkdir
       concat_files
-      faiterate
       my_sys_non_fatal
       my_glob_non_fatal
       timer

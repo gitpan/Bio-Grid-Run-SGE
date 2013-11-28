@@ -54,7 +54,7 @@ open my $range_1_5_3_fh, '>', $range_1_5_3 or die "Can't open filehandle: $!";
 while ( my $comb = $it_2->next_comb ) {
     print $range_1_5_3_fh $comb->[0];
 }
-close $range_1_5_3_fh;
+$range_1_5_3_fh->close;
 
 is( compare( $range_1_5_3, 't/data/Bio-Grid-Run-SGE-Consecutive.range-1-5-3.fa' ), 0, 'range 1,5,3' );
 

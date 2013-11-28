@@ -23,7 +23,7 @@ while(my $f = readdir($dh)) {
       push @{$times{$jn}}, int($1/(60*3))*3;
     }
   }
-  close $fh;
+  $fh->close;
 }
 
 closedir $dh;
@@ -41,5 +41,5 @@ while(my ($jn, $vals) = each %times) {
   for(my $v = $min; $v <= $max; $v+=3) {
     say $disth $v;
   }
-  close $disth;
+  $disth->close;
 }

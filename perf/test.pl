@@ -30,7 +30,7 @@ sub test_atomic {
 
     open my $ref_fh, '>', $ref or confess "Can't open filehandle: $!";
     print $ref_fh lc( $seqs->[ $idx ]->all_pretty );
-    close $ref_fh;
+    $ref_fh->close;
 
     #diag `cat $result_file`;
     #diag `cat $ref`;

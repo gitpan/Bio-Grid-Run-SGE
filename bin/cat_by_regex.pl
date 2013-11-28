@@ -14,7 +14,7 @@ for ( readdir($dh) ) {
     next unless (/$file_regex/);
     open my $fh, '<', $_ or confess "Can't open filehandle: $!";
     do { local $/; print <$fh> };
-    close $fh;
+    $fh->close;
 }
 closedir $dh;
 

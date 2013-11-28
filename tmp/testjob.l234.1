@@ -1,28 +1,4 @@
-use warnings;
-use Test::More;
-use Data::Dumper;
-use Carp;
-
-BEGIN {
-  use_ok('Bio::Grid::Run::SGE');
-
-  use_ok("Bio::Grid::Run::SGE::Log::Analysis");
-}
-
-my $d;
-sub TEST { $d = $_[0]; }
-#TESTS
-
-TEST 'worker is successful';
-{
-
-  my $dir       = 'tmp';
-  my $test_file = $dir . '/testjob.l234.1';
-  mkdir $dir;
-  open my $fh, '>', $test_file or confess "Can't open filehandle: $!";
-
-  print $fh <<'EOF';
-init: Sat Sep 22 21:14:43 2012
+init
 config: /home/bargs001/jobs/2012-09-19_b2g_rice/tmp/b2g_rice.config.dat
 id: 220
 job_id: 1715200
@@ -43,25 +19,3 @@ comp.task.time:: 219 0d 0h 28m 50s
 comp.end: Sat Sep 22 21:44:33 2012
 comp.time: 0d 0h 28m 50s (1730)
 run.end
-EOF
-  $fh->close;
-
-  Bio::Grid::Run::SGE::Log::Analysis->new(
-    c => {
-      cmd         => [qw/a b c d e/],
-      perl_bin    => '/test/perl',
-      stderr_dir  => $dir,
-      stdout_dir  => $dir,
-      working_dir => $dir,
-      submit_bin  => 'qsub',
-      log_dir     => $dir,
-      job_id      => 234,
-      job_name    => 'testjob',
-      tmp_dir     => $dir,
-      stderr_dir  => $dir
-    },
-    config_file => 'aaa'
-  );
-}
-
-done_testing();

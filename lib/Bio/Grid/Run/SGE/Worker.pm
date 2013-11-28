@@ -211,7 +211,7 @@ sub _create_task_iterator {
       } else {
         open my $in_fh, '>', $infile_template or confess "Can't open filehandle: $!";
         print $in_fh $comb->[$i];
-        close $in_fh;
+        $in_fh->close;
         push @infiles,      $infile_template;
         push @is_temp_file, 1;
       }
@@ -232,7 +232,7 @@ sub _create_task_iterator {
 sub _log_current_settings {
   my ($self) = @_;
 
-  $self->log_status("init");
+  $self->log_status("init: " . localtime(time) );;
   $self->log_status( "config: " . $self->config_file );
   $self->log_status( "id: " . $self->id );
   $self->log_status( "job_id: " . $self->job_id );

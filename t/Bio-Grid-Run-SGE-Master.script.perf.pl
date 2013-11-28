@@ -28,7 +28,7 @@ sub do_worker_stuff {
         print $result_fh lc($_)
 
     }
-    close $result_fh;
-    close $seq_file_fh;
+    $result_fh->close;
+    $seq_file_fh->close;
 }
 

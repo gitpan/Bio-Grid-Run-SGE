@@ -13,6 +13,6 @@ for my $a (@ARGV) {
         while(<$afh>) {
             print;
         }
-        close $afh;
+        $afh->close;
     }
 }

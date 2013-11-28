@@ -19,29 +19,41 @@ getopts('') or pod2usage( -exitstatus => 1, -verbose => 0 );
 my $dir    = shift;
 my $prefix = shift;
 
-pod2usage( -exitstatus => 1, -verbose => 0, -message => "$dir is not a directory") unless ( -d $dir );
+die "no prefix" unless ($prefix);
+pod2usage( -exitstatus => 1, -verbose => 0, -message => "$dir is not a directory" ) unless ( -d $dir );
 
 my $date = strftime( "%Y-%m-%d", localtime );
-$prefix = $prefix ? $date . "_" . $prefix : '.';
-
+$prefix = $date . "_" . $prefix unless ( $prefix eq '.' );
 say STDERR "prefix is > $prefix <";
-mkdir $prefix unless ( -d $prefix );
 
-my @files = glob("$dir/*.yml");
-push @files, glob("$dir/*.pl");
-push @files, glob("$dir/*.py");
-push @files, glob("$dir/*.R");
-push @files, glob("$dir/*.sh");
-push @files, "$dir/Makefile";
-
-for my $f (@files) {
-  next unless ( -f $f );
-  my (undef, $rd, $rf) = File::Spec->splitpath($f);
-  say STDERR "$f -> $prefix/$rf";
-  copy( $f, $prefix ) or die "Copy failed: $!";
+for my $sd ( '', 'bin', 'conf' ) {
+  clone_dir( File::Spec->catdir( $dir, $sd ), File::Spec->catdir( $prefix, $sd ) );
 }
 
 sub HELP_MESSAGE { pod2usage( -exitstatus => 0, -verbose => 2 ) }
+
+sub clone_dir {
+  my $dir    = shift;
+  my $prefix = shift;
+
+  return unless ( -d $dir );
+  mkdir $prefix unless ( -d $prefix );
+
+  my @files = glob("$dir/*.yml");
+  push @files, glob("$dir/*.pl");
+  push @files, glob("$dir/*.py");
+  push @files, glob("$dir/*.R");
+  push @files, glob("$dir/*.sh");
+  push @files, "$dir/Makefile";
+
+  for my $f (@files) {
+    next unless ( -f $f );
+    my ( undef, $rd, $rf ) = File::Spec->splitpath($f);
+    say STDERR "$f -> $prefix/$rf";
+    copy( $f, $prefix ) or die "Copy failed: $!";
+  }
+
+}
 
 __END__
 

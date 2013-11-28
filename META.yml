@@ -21,7 +21,9 @@ requires:
   Config::IniFiles: 0
   Data::Printer: 0
   Error: 0
+  File::Copy: 0
   File::HomeDir: 0
+  File::Next: 0
   File::Slurp: 0
   File::Spec: 0
   Getopt::Long::Descriptive: 0
@@ -37,4 +39,4 @@ requires:
   URI: 0
   XML::LibXML: 0
   parent: 0
-version: 0.032
+version: 0.033

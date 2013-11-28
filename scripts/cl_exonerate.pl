@@ -30,7 +30,7 @@ run_job(
                     print $res_fh "#T: " . $s->id, "\n";
                 }
             }
-            close $res_fh;
+            $res_fh->close;
 
             my @cmd = ( $EXEC, @{ $c->{args} }, '--query', $query_seq, '--target', $target_seq );
             INFO( "running ", join( " ", @cmd ) );

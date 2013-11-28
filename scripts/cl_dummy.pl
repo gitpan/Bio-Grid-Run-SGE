@@ -25,8 +25,8 @@ sub do_worker_stuff {
     while(<$file_fh>) {
         print $result_fh lc($_)
     }
-    close $result_fh;
-    close $file_fh;
+    $result_fh->close;
+    $file_fh->close;
     sleep 10;
 
     return 1;

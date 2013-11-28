@@ -26,7 +26,7 @@ run_job(
       open my $fh, '>', File::Spec->catfile( $c->{result_dir}, 'finished' )
         or die "Can't open filehandle: $!";
       say $fh $c->{job_id};
-      close $fh;
+      $fh->close;
       }
   }
 );

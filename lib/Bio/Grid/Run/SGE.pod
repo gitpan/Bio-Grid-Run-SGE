@@ -156,6 +156,22 @@ and additional log information.
 
   prefix_output_dirs: 
 
+=head3 path specifictation in the config file
+
+If the config file contains relative paths, the following policy is used:
+
+=over 4
+
+=item 1. The C<working_dir> config entry is used as "root".
+
+=item 2. If no C<working_dir> config entry is specified, the directory of the config file is set to the working/root dir.
+
+=item 3. If no config file is specified (yes, this is possible, but not recommended), the current dir is used as working/root dir.
+
+=back
+
+The working directory needs to exist.
+
 =head1 INCLUDED 3RD PARTY SOFTWARE
 
 To show running time of jobs,

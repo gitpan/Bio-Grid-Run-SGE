@@ -46,7 +46,7 @@ while ( $wait_time < $max_time) {
   if ( -f "$job_dir/$result_dir/finished" ) {
     open my $fh, '<', "$job_dir/$result_dir/finished" or die "Can't open filehandle: $!";
     $finished_successfully = <$fh>;
-    close $fh;
+    $fh->close;
     chomp $finished_successfully;
     last;
   }

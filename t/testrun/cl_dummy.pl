@@ -35,7 +35,7 @@ sub do_worker_stuff {
             print $res_fh uc($_) . " AGCTNNN\n";
         }
     }
-    close $res_fh;
-    close $seq_fh;
+    $res_fh->close;
+    $seq_fh->close;
     return my_sys_non_fatal("cp $seq_file $result_prefix.orig");
 }
