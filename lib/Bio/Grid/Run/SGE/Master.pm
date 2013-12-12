@@ -9,7 +9,6 @@ use Storable qw/nstore retrieve/;
 use File::Temp qw/tempdir/;
 use File::Which;
 use File::Spec;
-use Config::Auto;
 use Data::Dumper;
 use Bio::Grid::Run::SGE::Index;
 use Bio::Grid::Run::SGE::Iterator;
@@ -18,40 +17,20 @@ use Cwd qw/fastcwd/;
 use Clone qw/clone/;
 use Data::Printer colored => 1, use_prototypes => 0;
 use Bio::Gonzales::Util::Cerial;
+use Capture::Tiny 'capture';
 use Config;
 use FindBin;
-use Capture::Tiny 'capture';
 
 our $VERSION = 0.01_01;
-our $RC_FILE = "$ENV{HOME}/.bio-grid-run-sge.conf";
 
-override 'BUILDARGS' => sub {
-  my ($self) = @_;
-  my $a = super();
-
-  my $c;
-  $c = eval { Config::Auto::parse($RC_FILE) } if ( $RC_FILE && -f $RC_FILE );
-  if ( $c && !$@ ) {
-    print STDERR "Using config from " . $RC_FILE . "\n";
-    $a = { %{$c}, %{$a} };
+has 'cmd' => (
+  is       => 'rw',
+  required => 1,
+  isa      => 'ArrayRef[Str]',
+  default  => sub {
+    ["$FindBin::Bin/$FindBin::Script"];
   }
-
-  if ( exists( $a->{'config'} ) ) {
-    $c = eval { Config::Auto::parse( $a->{'config'} ) };
-    unless ($@) {
-      print STDERR "Using config from " . $a->{'config'} . "\n";
-      $a = { %{$c}, %{$a} };
-    }
-  }
-  if ( exists( $a->{method} ) && !exists( $a->{mode} ) ) {
-    warn "The configuration option 'method' is DEPRECATED, use 'mode' instead.";
-    $a->{mode}   = $a->{method};
-    $a->{method} = "DEPRECATED: The configuration option 'method' is DEPRECATED, use 'mode' instead.";
-  }
-  return $a;
-};
-
-has 'cmd' => ( is => 'rw', required => 1, isa => 'ArrayRef[Str]' );
+);
 has 'no_post_task' => ( is => 'rw' );
 
 has 'tmp_dir'    => ( is => 'rw', lazy_build => 1 );
@@ -61,8 +40,7 @@ has 'result_dir' => ( is => 'rw', lazy_build => 1 );
 has 'log_dir'    => ( is => 'rw', lazy_build => 1 );
 has 'idx_dir'    => ( is => 'rw', lazy_build => 1 );
 has 'test'       => ( is => 'rw' );
-has 'mail'       => ( is => 'rw' );
-has 'smtp_server' => ( is => 'rw' );
+has 'notify'       => ( is => 'rw' );
 has 'no_prompt'   => ( is => 'rw' );
 has 'lib'         => ( is => 'rw' );
 has 'script_dir'  => ( is => 'ro', default => $FindBin::Bin );
@@ -186,21 +164,6 @@ sub BUILD {
   }
 
   $self->extra( { %extra, %{ $self->extra } } );
-}
-
-sub _unknown_attrs_to_extra {
-  my ( $self, $c ) = @_;
-  my $m = __PACKAGE__->meta;
-
-  $c->{extra} //= {};
-  my %attrs = map { $_->name => 1 } $m->get_all_attributes;
-  for my $k ( keys %$c ) {
-    unless ( exists( $attrs{$k} ) ) {
-      $c->{extra}{$k} = delete $c->{$k};
-    }
-  }
-
-  return $c;
 }
 
 sub to_string {

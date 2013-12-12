@@ -72,7 +72,25 @@ L<DESCRIPTION> for more info.
 
 =item 1. Install L<Bio::Grid::Run::SGE> from CPAN
 
-=item 2. create a global config file F<$HOME/.bio-grid-run-sge.conf>
+=item 2. create a global config file F<$HOME/.bio-grid-run-sge.conf.yml>. For now,
+you can leave it empty. It might be wise to restrict reading permission, as you
+might use it to store account details (email, jabber, twitter, etc.) for job
+notifiations.
+
+  chmod 600 ~/.bio-grid-run-sge.conf
+
+Example content looks like:
+
+  ---
+  notify:
+    mail:
+      dest: person.in.charge@example.com
+      smtp_server: smtp.example.com
+    jabber:
+      jid: grid-report@jabber.example.com/grid_report
+      password: ...
+      dest: person-in-charge@jabber.example.com
+
 
 =item 3. Do the stuff in L</SYNOPSIS>
 

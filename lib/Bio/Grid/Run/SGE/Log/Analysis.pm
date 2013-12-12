@@ -8,9 +8,12 @@ use Carp;
 use File::Slurp qw(:std);
 use File::Spec::Functions qw/catfile/;
 use Bio::Gonzales::Util::File qw/slurpc open_on_demand/;
-use Mail::Sendmail;
 use Bio::Grid::Run::SGE::Util qw/my_glob MSG/;
 use Bio::Grid::Run::SGE::Log::Worker;
+use Bio::Grid::Run::SGE::Log::Notify::Jabber;
+use Bio::Grid::Run::SGE::Log::Notify::Mail;
+use Bio::Grid::Run::SGE::Config;
+use Sys::Hostname;
 
 our $VERSION = 0.01_01;
 
@@ -18,6 +21,7 @@ has config_file    => ( is => 'rw', required   => 1 );
 has c              => ( is => 'rw', required   => 1 );
 has error_cmd_file => ( is => 'rw', lazy_build => 1 );
 has error_log_file => ( is => 'rw', lazy_build => 1 );
+has attempts       => ( is => 'rw', lazy_build => 1 );
 has _log_report    => ( is => 'rw', default    => sub { [] } );
 has _cmd_script    => ( is => 'rw', default    => sub { [] } );
 
@@ -37,6 +41,11 @@ sub _build_error_cmd_file {
   my $error_cmd_file = catfile( $tmp_dir, "restart.$job_name.j$job_id.sh" );
 
   return $error_cmd_file;
+}
+
+sub _build_attempts {
+  my ($self) = @_;
+  return $self->c->{notification_attempts} // 3;
 }
 
 sub _report_log {
@@ -229,29 +238,40 @@ sub _report_error_job {
   return;
 }
 
-sub send_mail {
+sub notify {
   my ($self) = @_;
   my $c = $self->c;
-  return unless ( $c->{mail} );
 
-  unshift @{ $Mail::Sendmail::mailcfg{'smtp'} }, $c->{smtp_server} if ( $c->{smtp_server} );
+  # reread config and merge it to get the passwords for the notify stuff
+  $c = { %{ Bio::Grid::Run::SGE::Config->new->config }, %$c };
+  return unless ( $c->{notify} );
 
-  MSG("Sending mail to $c->{mail}.");
-
-  my %mail = (
-    To      => $c->{mail},
-    Subject => __PACKAGE__ . ' ' . $c->{job_name} . " - " . $c->{job_id},
-    From    => (
+  my %info = (
+    subject => '[LOG] ' . $c->{job_name} . " - " . $c->{job_id},
+    message => join( "\n", @{ $self->_log_report } ),
+    from    => (
       $ENV{SGE_O_LOGNAME} && $ENV{SGE_O_HOST}
       ? join( '@', $ENV{SGE_O_LOGNAME}, $ENV{SGE_O_HOST} )
-      : join( '@', $ENV{USER},          $ENV{HOSTNAME} )
+      : join( '@', $ENV{USER},          ($ENV{HOSTNAME} || hostname()) )
     ),
-    Message => join( "\n", @{ $self->_log_report } ),
   );
 
-  sendmail(%mail) or MSG($Mail::Sendmail::error);
+  if ( $c->{notify}{mail} ) {
+    my $n = Bio::Grid::Run::SGE::Log::Notify::Mail->new( $c->{notify}{mail} );
+    for ( my $i = 0; $i < $self->attempts; $i++ ) {
+      # notify function returns 1 on error. If this happens, try more times
+      last unless ( $n->notify( \%info ) );
+    }
+  }
+  if ( $c->{notify}{jabber} ) {
+    my $n = Bio::Grid::Run::SGE::Log::Notify::Jabber->new( $c->{notify}{jabber} );
+    for ( my $i = 0; $i < $self->attempts; $i++ ) {
+      # notify function returns 1 on error. If this happens, try more times
+      last unless ( $n->notify( \%info ) );
+    }
+  }
 
-  MSG( "Mail log says:\n", $Mail::Sendmail::log );
+  return;
 }
 
 sub write {

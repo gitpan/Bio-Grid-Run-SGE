@@ -17,12 +17,14 @@ my %module_build_args = (
     "Joachim Bargsten <jwb\@cpan.org>"
   ],
   "dist_name" => "Bio-Grid-Run-SGE",
-  "dist_version" => "0.034",
+  "dist_version" => "0.037",
   "license" => "perl",
   "module_name" => "Bio::Grid::Run::SGE",
   "recommends" => {},
   "recursive_test_files" => 1,
   "requires" => {
+    "AnyEvent" => 0,
+    "AnyEvent::XMPP" => 0,
     "Bio::Gonzales" => 0,
     "Capture::Tiny" => 0,
     "Clone" => 0,
@@ -65,6 +67,7 @@ my %module_build_args = (
     "bin/cat.pl",
     "bin/cat_by_regex.pl",
     "bin/jclone",
+    "bin/bgrs-notify.pl",
     "bin/dummy_worker.pl",
     "bin/qstat-jwb"
   ],

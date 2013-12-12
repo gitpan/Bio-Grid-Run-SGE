@@ -16,33 +16,6 @@ my $td = tempdir( CLEANUP => 1 );
 $ENV{SGE_TASK_ID} = 1;
 $ENV{JOB_ID}      = -1;
 
-undef $Bio::Grid::Run::SGE::Master::RC_FILE;
-
-{
-  my $c = { test => 3, unknown_attr1 => 1, unknown_attr2 => 2, mode => 'Dummy' };
-  Bio::Grid::Run::SGE::Master->_unknown_attrs_to_extra($c);
-  my $e = $c->{extra};
-  is_deeply(
-    $c,
-    {
-      'test' => 3,
-      'mode' => 'Dummy',
-      extra => {
-        unknown_attr1 => 1,
-        unknown_attr2 => 2,
-      },
-    },
-    "configuration without unknown attributes"
-  );
-  is_deeply(
-    $e,
-    {
-      'unknown_attr1' => 1,
-      'unknown_attr2' => 2
-    },
-    "extra with unknown attributes"
-  );
-}
 
 {
 

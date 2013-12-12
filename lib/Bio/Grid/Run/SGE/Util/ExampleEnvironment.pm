@@ -6,6 +6,7 @@ use Carp;
 use File::Spec;
 use Cwd;
 use Bio::Gonzales::Util::Cerial;
+use Sys::Hostname;
 
 use 5.010;
 
@@ -43,7 +44,7 @@ sub get_single_env {
   return {
     %ENV,
     HOME     => $ENV{HOME},
-    HOSTNAME => ( $ENV{HOSTNAME} // 'localhost' ),
+    HOSTNAME => ( $ENV{HOSTNAME} // hostname() // 'localhost' ),
     USER     => $ENV{USER},
     LOGNAME  => $ENV{USER},
     #PATH            => "/usr/local/bin:/bin:/usr/bin",

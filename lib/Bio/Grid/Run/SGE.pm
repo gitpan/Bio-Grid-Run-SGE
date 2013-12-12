@@ -8,8 +8,10 @@ use Carp;
 
 use Bio::Grid::Run::SGE::Master;
 use Bio::Grid::Run::SGE::Worker;
+use Bio::Grid::Run::SGE::Config;
 use Bio::Grid::Run::SGE::Util qw/my_glob my_sys INFO delete_by_regex my_sys_non_fatal/;
 use Bio::Grid::Run::SGE::Log::Analysis;
+use Data::Dumper;
 
 use IO::Prompt::Tiny qw/prompt/;
 use File::Spec;
@@ -29,7 +31,6 @@ our $VERSION = 0.01_01;
 @EXPORT      = qw(run_job INFO my_sys my_sys_non_fatal my_glob);
 %EXPORT_TAGS = ();
 @EXPORT_OK   = qw();
-
 
 sub run_job {
   my ($a) = @_;
@@ -69,10 +70,10 @@ sub run_job {
     _run_worker(
       {
         config_file => $config_file,
-        a         => $a,
-        range     => $opt->range,
-        job_id    => $opt->job_id,
-        id        => $opt->id
+        a           => $a,
+        range       => $opt->range,
+        job_id      => $opt->job_id,
+        id          => $opt->id
       }
     );
 
@@ -91,7 +92,14 @@ sub run_job {
   } else {
     #MASTER / CLEANING
 
-    my $c = _read_config( $opt, $config_file );
+    # get the configuration. hide notify stuff, because it contains passwords.
+    # it gets reread (with passwords) separately in the log analysis
+    my $c = Bio::Grid::Run::SGE::Config->new(
+      job_config_file      => $config_file,
+      opt                  => $opt,
+      cluster_script_setup => $a
+    )->hide_notify_settings->config;
+
     #CLEANING
     if ( $opt->clean || $opt->mrproper ) {
       exit unless ( prompt("Clean? [yn]") eq 'y' );
@@ -114,27 +122,6 @@ sub run_job {
   return;
 }
 
-sub _read_config {
-  my ( $opt, $config_file ) = @_;
-  #merge config
-  my %c = ();
-  # from config file
-  if ( $config_file && -f $config_file ) {
-    %c = %{ yslurp($config_file) };
-  }
-  # from the config in the cluster script
-  if ( $a->{config} ) {
-    %c = ( %c, %{ $a->{config} } );
-  }
-
-  $c{no_prompt} = $opt->no_prompt unless defined $c{no_prompt};
-  confess "no configuration found, file: $config_file" unless (%c);
-
-  #set fixed values
-  $c{cmd} = ["$FindBin::Bin/$FindBin::Script"];
-  return \%c;
-}
-
 sub _run_master {
   my ( $c, $a ) = @_;
 
@@ -152,7 +139,7 @@ sub _run_master {
   # we are already in the dir of the config file, if given. (see further up)
   # so relative paths are based on the config file dir
   # if no config file, we are still in the directory from where we started the script
-  # policy 
+  # policy
   # 1. working dir config entry
   # 2. dir of config file if config file
   # 3. current dir if no config file
@@ -160,13 +147,10 @@ sub _run_master {
   my $working_dir = $c->{working_dir} // fastcwd();
 
   my $current_dir = fastcwd();
-  if ( $working_dir && -d $working_dir) {
+  if ( $working_dir && -d $working_dir ) {
     $c->{working_dir} = File::Spec->rel2abs($working_dir);
     chdir $working_dir;
   }
-
-  # put unknown configuration options into extra
-  Bio::Grid::Run::SGE::Master->_unknown_attrs_to_extra($c);
 
   #get a Bio::Grid::Run::SGE::Master object
   my $m = $a->{pre_task}->($c);
@@ -218,7 +202,7 @@ sub _run_post_task {
   my $log = Bio::Grid::Run::SGE::Log::Analysis->new( c => $c, config_file => $config_file );
   $log->analyse;
   $log->write;
-  $log->send_mail;
+  $log->notify;
 
   # run post task, if desired
   $post_task->($c)

@@ -3,6 +3,7 @@ package Bio::Grid::Run::SGE::Worker;
 use warnings;
 use strict;
 use Mouse;
+use 5.010;
 use Storable;
 use Data::Dumper;
 use Carp;
@@ -11,6 +12,10 @@ use File::Spec;
 use Bio::Grid::Run::SGE::Index;
 use Net::Domain qw(hostfqdn);
 use IO::Handle;
+
+
+
+
 
 use Cwd qw/fastcwd/;
 
@@ -128,6 +133,7 @@ sub run {
   # adjust config for main task
   $c->{part_size} = $self->_part_size;
   $c->{job_id}    = $self->job_id . "." . $self->id;
+  $c->{nslots} = $ENV{NSLOTS} // 1;
 
   while ( my $task_params = $next_task->() ) {
     my $infiles       = $task_params->{infiles};
