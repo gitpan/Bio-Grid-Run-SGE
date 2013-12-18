@@ -25,23 +25,52 @@ sub BUILD {
   return $self;
 }
 
+before 'create' => sub {
+  my $self = shift;
+
+  print STDERR "SKIPPING INDEXING STEP, THE INDEX IS UP TO DATE\n"
+    if ( $self->_is_indexed );
+
+  $self->_check_writable;
+
+  print STDERR "INDEXING ....\n";
+};
+
 sub create {
-  my ( $self, $input_files ) = @_;
+  my ( $self, $elements ) = @_;
 
-  if ( $self->_is_indexed ) {
-
-    print STDERR "SKIPPING INDEXING STEP, THE INDEX IS UP TO DATE\n";
-    return $self;
-  }
-  confess 'No write permission, set write_flag to write' unless ( $self->writeable );
+  return $self if ( $self->_is_indexed );
 
   my $chunk_size = $self->chunk_size;
 
-  #FIXME chunks should be possible
-  $self->idx( [@$input_files] );
+  my @current_chunk;
+  my $chunk_elem_count = 0;
+  my @idx;
+
+  for my $e (@$elements) {
+    if ( $chunk_elem_count && $chunk_elem_count % $chunk_size == 0 ) {
+      $chunk_elem_count = 0;
+
+      push @idx, [@current_chunk];
+      undef @current_chunk;
+    }
+    push @current_chunk, $e;
+    $chunk_elem_count++;
+
+  }
+
+  push @idx, [@current_chunk] if ( @current_chunk && @current_chunk > 0 );
+
+  $self->idx( \@idx );
 
   $self->_store;
   return $self;
+}
+
+sub _check_writable {
+  my $self = shift;
+  confess 'No write permission, set write_flag to write' unless ( $self->writeable );
+
 }
 
 sub _is_indexed {

@@ -14,10 +14,11 @@ use File::Spec;
 run_job(
   {
     task => sub {
-      my ( $c, $result_prefix, $item ) = @_;
+      my ( $c, $result_prefix, $idx_item ) = @_;
 
-      INFO "Running $item -> $result_prefix";
-      jspew( $result_prefix . ".json", \%ENV );
+      INFO "Running $idx_item->[0] -> $result_prefix";
+      jspew( $result_prefix . ".env.json",  \%ENV );
+      jspew( $result_prefix . ".item.json", $idx_item );
       sleep 3;
 
       return 1;
@@ -28,8 +29,31 @@ run_job(
         or die "Can't open filehandle: $!";
       say $fh $c->{job_id};
       $fh->close;
-      }
+    },
+    usage => \&usage,
   }
 );
+
+sub usage {
+  return <<EOF;
+The script takes an list like index, prints element(s) to <result_prefix>.item.json.
+Additionally, the current environment will be stored in <result_prefix>.env.json.
+
+EXAMPLE CONFIG:
+  ---
+  input:
+  - elements:
+    - a
+    - b
+    - c
+    - d
+    - e
+    - f
+    format: List
+  job_name: <job_name>
+  mode: Consecutive
+EOF
+
+}
 
 1;

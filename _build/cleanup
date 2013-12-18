@@ -1,5 +1,0 @@
-do{ my $x = {
-       'blib' => 1,
-       'Bio-Grid-Run-SGE-*' => 1
-     };
-$x; }

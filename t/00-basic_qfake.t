@@ -12,8 +12,13 @@ use Cwd qw/fastcwd/;
 
 BEGIN { use_ok('Bio::Grid::Run::SGE'); }
 
-my $cl_env   = File::Spec->rel2abs("scripts/cl_env.pl");
+my $cl_env = File::Spec->rel2abs("scripts/cl_env.pl");
 
+my $usage = `$cl_env --help`;
+
+diag $usage;
+
+my @elements = ( 'a', 'b', 'c', 'd', 'e', 'f' );
 my $tmp_dir = 'tmp_test';
 mkdir $tmp_dir unless ( -d $tmp_dir );
 
@@ -24,7 +29,7 @@ my $result_dir = 'r';
 
 # create basic config
 my $basic_config = {
-  input      => [ { format => 'List', elements => [ 'a', 'b', 'c', 'd', 'e', 'f' ] } ],
+  input      => [ { format => 'List', elements => \@elements } ],
   job_name   => $job_name,
   mode       => 'Consecutive',
   no_prompt  => 1,
@@ -40,7 +45,7 @@ diag "THIS TEST MIGHT TAKE UP TO 30 MINUTES";
 my $max_time = 30 * 60;
 my $wait_time = poll_interval( 1, $max_time );
 my $finished_successfully;
-while ( $wait_time < $max_time) {
+while ( $wait_time < $max_time ) {
 
   diag "  next poll in $wait_time seconds";
   sleep $wait_time;
@@ -56,10 +61,22 @@ while ( $wait_time < $max_time) {
 }
 ok($finished_successfully);
 
-my @files = grep {m/$job_name.*$finished_successfully.*\.json$/} read_dir( "$job_dir/$result_dir", prefix => 1 );
+my @files
+  = grep {m/$job_name.*$finished_successfully.*\.env\.json$/} read_dir( "$job_dir/$result_dir", prefix => 1 );
 
 my $env = jslurp( $files[-2] );
 
-is($env->{JOB_NAME}, $job_name);
+is( $env->{JOB_NAME}, $job_name );
+
+my %found_elements;
+my @item_files = grep {m/$job_name.*$finished_successfully.*\.item\.json$/}
+  read_dir( "$job_dir/$result_dir", prefix => 1 );
+for my $f (@item_files) {
+  my $items = jslurp($f);
+  for my $item (@$items) {
+    $found_elements{$item}++;
+  }
+}
+is_deeply( [ sort keys %found_elements ], [ sort @elements ] );
 
 done_testing();

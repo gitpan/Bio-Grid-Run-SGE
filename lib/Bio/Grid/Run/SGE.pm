@@ -50,7 +50,16 @@ sub run_job {
     [ 'node_log=i',    "rerun the nodelog stuff" ],
   );
 
-  print( $usage->text ), exit if $opt->help;
+  if ( $opt->help ) {
+    print "STANDARD USAGE INFO OF Bio::Grid::Run::SGE\n";
+    print( $usage->text );
+    if ( $a->{usage} ) {
+      print "\n\nCLUSTER SCRIPT USAGE INFO\n";
+      my $script_usage = ref $a->{usage} eq 'CODE' ? $a->{usage}->() : $a->{usage};
+      print $script_usage;
+    }
+    exit;
+  }
 
   #this is either the original yaml config or a serialized config object
   my $config_file = shift @ARGV;

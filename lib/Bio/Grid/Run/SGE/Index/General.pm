@@ -69,10 +69,11 @@ sub create {
 
   for my $f (@$abs_input_files) {
 
+    # start of file is the first (chunk) element
     my @file_idx  = (0);
     my $num_elems = 1;
-
     my $chunk_elem_count = 1;
+
     open my $fh, '<', $f or confess "Can't open filehandle $f: $!";
     unless (<$fh>) {
       $fh->close;

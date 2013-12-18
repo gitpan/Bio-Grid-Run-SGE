@@ -9,70 +9,20 @@ use Storable qw/retrieve/;
 use List::MoreUtils qw/uniq/;
 use File::Slurp;
 
-with 'Bio::Grid::Run::SGE::Role::Indexable';
+extends 'Bio::Grid::Run::SGE::Index::List';
 
 our $VERSION = 0.01_01;
 
-sub BUILD {
-  my ($self) = @_;
+around 'create' => sub {
+  my $orig = shift;
+  my $self = shift;
 
-  confess "index file not set"
-    unless ( $self->idx_file );
-  if ( -f $self->idx_file ) {
-    $self->_load_index;
-  }
+  my $file_name_elements = shift;
 
-  return $self;
-}
+  my $file_name_elements_abs = $self->_glob_input_files($file_name_elements);
 
-sub create {
-  my ( $self, $input_files ) = @_;
-
-  confess 'No write permission, set write_flag to write' unless ( $self->writeable );
-
-  if ( $self->_is_indexed) {
-    print STDERR "SKIPPING INDEXING STEP, THE INDEX IS UP TO DATE\n";
-    return $self;
-  }
-
-  print STDERR "INDEXING ....\n";
-
-  my $abs_input_files = $self->_glob_input_files($input_files);
-
-  #FIXME chunks should be possible
-  $self->idx($abs_input_files);
-
-  $self->_store;
-  return $self;
-}
-
-sub _is_indexed {
-  my ($self) = @_;
-
-  return if ( $self->_reindexing_necessary );
-  return unless ( @{ $self->idx } > 0 && -f $self->idx_file );
-
-  return 1;
-}
-
-sub num_elem {
-  my ($self) = @_;
-
-  return scalar @{ $self->idx };
-}
-
-sub get_elem {
-  my ( $self, $elem_idx ) = @_;
-  my $idx = $self->idx;
-
-  return $idx->[$elem_idx];
-}
-
-sub type {
-  return 'direct';
-}
-
-sub close { }
+  return $self->$orig($file_name_elements_abs);
+};
 
 __PACKAGE__->meta->make_immutable;
 1;

@@ -23,9 +23,10 @@ my $job_dir = tempdir( CLEANUP => 1, DIR => $tmp_dir );
 my $job_name   = 'test_env';
 my $result_dir = 'r';
 
+my @elements = ( 'a', 'b', 'c', 'd', 'e', 'f' );
 # create basic config
 my $basic_config = {
-  input      => [ { format => 'List', elements => [ 'a', 'b', 'c', 'd', 'e', 'f' ] } ],
+  input      => [ { format => 'List', elements => \@elements } ],
   job_name   => $job_name,
   mode       => 'Consecutive',
   no_prompt  => 1,
@@ -67,14 +68,25 @@ SKIP: {
   }
   ok($finished_successfully);
 
-  my @files
-    = grep {m/$job_name.*$finished_successfully.*\.json$/} read_dir( "$job_dir/$result_dir", prefix => 1 );
+  my @files = grep {m/$job_name.*$finished_successfully.*\.env\.json$/}
+    read_dir( "$job_dir/$result_dir", prefix => 1 );
 
   my $env = jslurp( $files[-2] );
 
   is( $env->{JOB_NAME}, $job_name );
 
   jspew( "$tmp_dir/env.json", $env );
+
+  my %found_elements;
+  my @item_files = grep {m/$job_name.*$finished_successfully.*\.item\.json$/}
+    read_dir( "$job_dir/$result_dir", prefix => 1 );
+  for my $f (@item_files) {
+    my $items = jslurp($f);
+    for my $item (@$items) {
+      $found_elements{$item}++;
+    }
+  }
+  is_deeply( [ sort keys %found_elements ], [ sort @elements ] );
 }
 
 done_testing();
