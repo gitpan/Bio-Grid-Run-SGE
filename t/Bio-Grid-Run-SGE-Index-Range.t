@@ -24,7 +24,7 @@ is($idx->num_elem, 7);
 
 for my $elem_idx ( @range ) {
     my $data = $idx->get_elem($elem_idx);
-    is( $data, $elem_idx ,  'elem data test' );
+    is_deeply( $data, [ $elem_idx ],  'elem data test' );
 }
 
 done_testing();

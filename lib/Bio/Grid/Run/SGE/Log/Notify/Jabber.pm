@@ -16,6 +16,7 @@ our $VERSION = 0.01_01;
 has jid      => ( is => 'rw', required => 1 );
 has password => ( is => 'rw', required => 1 );
 has dest     => ( is => 'rw', required => 1 );
+has type     => ( is => 'rw', default  => 'normal' );
 
 sub notify {
   my $self = shift;
@@ -37,8 +38,9 @@ sub notify {
       MSG("Sending message to $dest");
       my $immsg = AnyEvent::XMPP::IM::Message->new(
         to      => $dest,
-        subject => $info->{subject} . '  (' . $info->{from} . ')',
-        body    => $info->{message}
+        subject => $info->{subject},
+        body    => $info->{message},
+        type    => $self->type,
       );
       $immsg->send($con);
     },

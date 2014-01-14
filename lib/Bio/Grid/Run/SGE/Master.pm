@@ -256,7 +256,7 @@ sub run {
     if ( defined $2 ) {
       $self->job_id($2);
     } else {
-      warn "could not parse job id, using -1 as job id";
+      warn "[SUBMIT_WARNING] could not parse job id, using -1 as job id.\nSTDOUT:\n$stdout\nSTDERR:\n$stderr";
       $self->job_id(-1);
     }
   }

@@ -9,7 +9,7 @@ use Getopt::Std;
 use Bio::Grid::Run::SGE::Util::ExampleEnvironment;
 
 my $hold_idx = firstidx { $_ eq '-hold_jid' } @ARGV;
-splice @ARGV, $hold_idx, 2 if($hold_idx >= 0);
+splice @ARGV, $hold_idx, 2 if ( $hold_idx >= 0 );
 
 our ( $opt_N, $opt_S, $opt_e, $opt_o, $opt_t );
 getopt('N:S:e:o:t:');
@@ -42,7 +42,7 @@ if ($opt_t) {
       )
       };
     my @cmd = ( $opt_S, @ARGV );
-    system(@cmd);
+    system(@cmd) == 0 or die "system @cmd failed: $?";
   }
 } else {
   %ENV = %{
@@ -59,7 +59,7 @@ if ($opt_t) {
     };
 
   my @cmd = ( $opt_S, @ARGV );
-  system(@cmd);
+  system(@cmd) == 0 or die "system @cmd failed: $?";
 
 }
 say "Your job $job_id (\"$name\") has been submitted";

@@ -37,17 +37,17 @@ sub run_job {
   confess "main task missing" unless ( $a->{task} );
 
   my ( $opt, $usage ) = describe_options(
-    '%c %o [<config_file>]',
-    [ 'help|h',        'print help message and exit' ],
-    [ 'clean|c',       "clean temp files" ],
-    [ 'mrproper|C',    "clean temp files and config files" ],
-    [ 'worker|w',      "run as worker (invoked by qsub)" ],
-    [ 'post_task|p=i', "run post task with id of previous task" ],
-    [ 'range|r=s',     "run predefined range" ],
-    [ 'job_id=s',      "run under this job_id" ],
-    [ 'id=s',          "run under this worker id" ],
-    [ 'no_prompt',     "ask no confirmation stuff for running a job" ],
-    [ 'node_log=i',    "rerun the nodelog stuff" ],
+    "%c %o [<config_file>] [<arg1> <arg2> ... <argn>]\n"
+      . "%c %o --no_config_file [<arg1> <arg2> ... <argn>]",
+    [ 'help|h',           'print help message and exit' ],
+    [ 'no_config_file|n', "do not expect a config file as first argument" ],
+    [ 'worker|w',         "run as worker (invoked by qsub)" ],
+    [ 'post_task|p=i',    "run post task with id of previous task" ],
+    [ 'range|r=s',        "run predefined range" ],
+    [ 'job_id=s',         "run under this job_id" ],
+    [ 'id=s',             "run under this worker id" ],
+    [ 'no_prompt',        "ask no confirmation stuff for running a job" ],
+    [ 'node_log=i',       "rerun the nodelog stuff" ],
   );
 
   if ( $opt->help ) {
@@ -61,14 +61,19 @@ sub run_job {
     exit;
   }
 
+  my $config_file;
+  # the script might be invoked with the no_config_file option
+  $config_file = shift @ARGV
+    unless ( $opt->no_config_file );
+
   #this is either the original yaml config or a serialized config object
-  my $config_file = shift @ARGV;
   if ( $config_file && -f $config_file ) {
     $config_file = File::Spec->rel2abs($config_file);
     # if no config file supplied, do not change to any directory
     my $dest_dir = ( File::Spec->splitpath($config_file) )[1];
     chdir($dest_dir);
   }
+  my @script_args = @ARGV;
 
   if ( $opt->worker ) {
     # WORKER
@@ -99,32 +104,18 @@ sub run_job {
     _run_post_task( $config_file, $opt->post_task, $a->{post_task} );
 
   } else {
-    #MASTER / CLEANING
+    #MASTER
 
     # get the configuration. hide notify stuff, because it contains passwords.
     # it gets reread (with passwords) separately in the log analysis
     my $c = Bio::Grid::Run::SGE::Config->new(
       job_config_file      => $config_file,
       opt                  => $opt,
+      cluster_script_args  => \@script_args,
       cluster_script_setup => $a
     )->hide_notify_settings->config;
 
-    #CLEANING
-    if ( $opt->clean || $opt->mrproper ) {
-      exit unless ( prompt("Clean? [yn]") eq 'y' );
-
-      _clean_job($c);
-      $a->{clean_task}->($c) if ( $a->{clean_task} );
-      if ( $opt->mrproper ) {
-        exit unless ( prompt("Mr. Proper? [yn]") eq 'y' );
-
-        _mrproper_job($c);
-        $a->{mrproper_task}->($c) if ( $a->{mrproper_task} );
-      }
-    } else {
-      #MASTER
-      _run_master( $c, $a );
-    }
+    _run_master( $c, $a );
 
   }
 
@@ -224,23 +215,6 @@ sub _default_pre_task {
   my ($c) = @_;
 
   return Bio::Grid::Run::SGE::Master->new($c);
-}
-
-sub _clean_job {
-  my $c = shift;
-  delete_by_regex( $c->{stdout_dir}, qr/\Q$c->{job_name}\E\.o\d+\.\d+/ );
-  delete_by_regex( $c->{stderr_dir}, qr/\Q$c->{job_name}\E\.e\d+\.\d+/ );
-  return;
-}
-
-sub _mrproper_job {
-  my $c = shift;
-  delete_by_regex( $c->{result_dir}, qr/\Q$c->{job_name}\E_.*\.\d+\.result/ );
-  delete_by_regex( $c->{tmp_dir},    qr/worker\.j\d+\.t[-\d]+\.tmp/ );
-  delete_by_regex( $c->{tmp_dir},    qr/\Q$c->{job_name}\E\.config.dat/ );
-  delete_by_regex( $c->{tmp_dir},    qr/$c->{job_name}\.idx/ );
-
-  return;
 }
 
 1;

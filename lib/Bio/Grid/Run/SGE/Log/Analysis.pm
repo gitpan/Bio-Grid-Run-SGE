@@ -29,7 +29,7 @@ sub _build_error_log_file {
   my ($self) = @_;
 
   my ( $tmp_dir, $job_name, $job_id ) = @{ $self->c }{qw/tmp_dir job_name job_id/};
-  my $error_log_file = catfile( $tmp_dir, "$job_name.j$job_id.log" );
+  my $error_log_file = catfile( $tmp_dir, "log.$job_name.j$job_id.txt" );
 
   return $error_log_file;
 }
@@ -74,7 +74,12 @@ sub analyse {
 
   my $something_crashed;
 
-  $self->_report_log( 'working_dir is ' . $c->{working_dir} );
+  $self->_report_log( $self->_gen_subject(),                     '' );
+  $self->_report_log( 'main log file: ' . $self->error_log_file, '' );
+
+  $self->_report_log( 'working dir: ' . $c->{working_dir} );
+  $self->_report_log( 'result dir: ' . $c->{result_dir} );
+  $self->_report_log( 'tmp dir: ' . $c->{tmp_dir}, '' );
 
   my %jobs_with_log;
 
@@ -148,20 +153,26 @@ sub analyse {
   my $no_jobs_ran_at_all;
   my $total_jobs = 'n/a';
   if ( exists( $c->{range} ) ) {
-    $total_jobs = $c->{range}[1] - $c->{range}[0];
+    $total_jobs = $c->{range}[1] - $c->{range}[0] + 1;
   MISSING_JOBS:
     for ( my $i = $c->{range}[0]; $i <= $c->{range}[1]; $i++ ) {
       unless ( exists( $jobs_with_log{$i} ) ) {
         $something_crashed++;
-        $no_jobs_ran_at_all = $self->_report_missing_job(
-          {
-            job_cmd => $STD_JOB_CMD,
-            job_id  => $job_id,
-            id      => $i,
-            cwd     => $STD_WORKER_WD,
-          }
-        );
-        last MISSING_JOBS if ($no_jobs_ran_at_all);
+        if ( $STD_JOB_CMD && $STD_WORKER_WD ) {
+          $self->_report_missing_job(
+            {
+              job_cmd => $STD_JOB_CMD,
+              job_id  => $job_id,
+              id      => $i,
+              cwd     => $STD_WORKER_WD,
+            }
+          );
+          $err_hosts{NA}++;
+        } else {
+          $no_jobs_ran_at_all = 1;
+          $err_hosts{NA} = $total_jobs;
+          last MISSING_JOBS;
+        }
       }
     }
   }
@@ -181,7 +192,7 @@ sub analyse {
     }
     push @log_entries, sprintf( "TOTAL FAILED: %s of %s", $total_failed, $total_jobs );
 
-    $self->_report_log( join( "\n", @log_entries ) );
+    $self->_report_log( '', @log_entries );
   } else {
     $self->_report_log('all nodes finished successfully');
   }
@@ -208,9 +219,6 @@ sub _report_crashed_job {
 sub _report_missing_job {
   my ( $self, $s ) = @_;
 
-  unless ( $s->{job_cmd} && $s->{cwd} ) {
-    return 1;
-  }
   $self->_report_cmd("#NODE: $s->{id}; NO_LOG");
   #replace job array numbers with worker id, to emulate the environment of the original array job
 
@@ -247,13 +255,9 @@ sub notify {
   return unless ( $c->{notify} );
 
   my %info = (
-    subject => '[LOG] ' . $c->{job_name} . " - " . $c->{job_id},
-    message => join( "\n", @{ $self->_log_report } ),
-    from    => (
-      $ENV{SGE_O_LOGNAME} && $ENV{SGE_O_HOST}
-      ? join( '@', $ENV{SGE_O_LOGNAME}, $ENV{SGE_O_HOST} )
-      : join( '@', $ENV{USER},          ($ENV{HOSTNAME} || hostname()) )
-    ),
+    subject => '[LOG]' . $self->_gen_subject(),
+    message => join( "\n", @{ $self->_log_report } ) . "\n",
+    from    => $self->_get_from_address(),
   );
 
   if ( $c->{notify}{mail} ) {
@@ -274,6 +278,24 @@ sub notify {
   return;
 }
 
+sub _gen_subject {
+  my $self = shift;
+  my $c    = $self->c;
+
+  return
+      '['
+    . localtime . ']['
+    . $c->{job_id} . '] '
+    . $c->{job_name} . ' ('
+    . $self->_get_from_address() . ')';
+}
+
+sub _get_from_address {
+  return $ENV{SGE_O_LOGNAME} && $ENV{SGE_O_HOST}
+    ? join( '@', $ENV{SGE_O_LOGNAME}, $ENV{SGE_O_HOST} )
+    : join( '@', $ENV{USER}, ( $ENV{HOSTNAME} || hostname() ) );
+}
+
 sub write {
   my ($self) = @_;
 
@@ -288,7 +310,7 @@ sub write {
   my $log_f = $self->error_log_file;
 
   open my $log_fh, '>', $log_f or confess "Can't open filehandle: $!";
-  print $log_fh join "\n", @{ $self->_log_report };
+  print $log_fh join( "\n", @{ $self->_log_report } ), "\n";
   $log_fh->close;
 
   #CREATE SCRIPT TO UPDATE RERUN JOBS

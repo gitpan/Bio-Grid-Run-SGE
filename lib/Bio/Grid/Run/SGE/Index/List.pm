@@ -21,6 +21,9 @@ sub BUILD {
   if ( -f $self->idx_file ) {
     $self->_load_index;
   }
+  # always reindex list based indices. Lists can easily change
+  # and it is not straight forward to check changes
+  $self->_reindexing_necessary(1);
 
   return $self;
 }

@@ -17,6 +17,7 @@ our $VERSION = 0.01_01;
 
 has 'job_config_file' => ( is => 'rw' );
 has 'cluster_script_setup' => ( is => 'rw', default => sub { {} } );
+has 'cluster_script_args' => ( is => 'rw', default => sub { [] } );
 has 'config' => ( is => 'rw', lazy_build => 1 );
 has 'opt' => (
   is      => 'rw',
@@ -79,6 +80,7 @@ sub _build_config {
   my $config_file = $self->job_config_file;
   my $a           = $self->cluster_script_setup;
   my $opt         = $self->opt;
+  my $script_args = $self->cluster_script_args;
 
   #merge config
   # global options always get overwritten by local config
@@ -93,6 +95,12 @@ sub _build_config {
   # from config file
   if ( $config_file && -f $config_file ) {
     %c = ( %c, %{ yslurp($config_file) } );
+  }
+
+  # from additional cluster script args
+  if($script_args && @$script_args > 0) {
+    $c{args} //= [];
+    push @{$c{args}}, @$script_args;
   }
 
   $c{no_prompt} = $opt->{no_prompt} unless defined $c{no_prompt};
