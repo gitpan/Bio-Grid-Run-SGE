@@ -13,10 +13,6 @@ use Bio::Grid::Run::SGE::Index;
 use Net::Domain qw(hostfqdn);
 use IO::Handle;
 
-
-
-
-
 use Cwd qw/fastcwd/;
 
 our $VERSION = 0.01_01;
@@ -133,7 +129,7 @@ sub run {
   # adjust config for main task
   $c->{part_size} = $self->_part_size;
   $c->{job_id}    = $self->job_id . "." . $self->id;
-  $c->{nslots} = $ENV{NSLOTS} // 1;
+  $c->{nslots}    = $ENV{NSLOTS} // 1;
 
   while ( my $task_params = $next_task->() ) {
     my $infiles       = $task_params->{infiles};
@@ -146,8 +142,11 @@ sub run {
     my $task_time = time;
 
     #RUN TASK
-    unless ( $self->task->( $c, $result_prefix, @{$infiles} ) ) {
+    my $return_status = $self->task->( $c, $result_prefix, @{$infiles} );
+    unless ($return_status) {
       $self->log_status( "comp.task.exit.error:: $task_id " . join( "#\0#", @$infiles, $result_prefix ) );
+    } elsif ( $return_status < 0 ) {
+      $self->log_status("comp.task.exit.skip:: $task_id");
     } else {
       $self->log_status("comp.task.exit.success:: $task_id");
     }
@@ -238,7 +237,7 @@ sub _create_task_iterator {
 sub _log_current_settings {
   my ($self) = @_;
 
-  $self->log_status("init: " . localtime(time) );;
+  $self->log_status( "init: " . localtime(time) );
   $self->log_status( "config: " . $self->config_file );
   $self->log_status( "id: " . $self->id );
   $self->log_status( "job_id: " . $self->job_id );

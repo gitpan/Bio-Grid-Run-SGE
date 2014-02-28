@@ -19,7 +19,8 @@ use Data::Printer colored => 1, use_prototypes => 0;
 use Bio::Gonzales::Util::Cerial;
 use Capture::Tiny 'capture';
 use Config;
-use FindBin;
+use FindBinNew qw($Bin $Script);
+FindBinNew::again();
 
 our $VERSION = 0.01_01;
 
@@ -28,7 +29,7 @@ has 'cmd' => (
   required => 1,
   isa      => 'ArrayRef[Str]',
   default  => sub {
-    ["$FindBin::Bin/$FindBin::Script"];
+    ["$Bin/$Script"];
   }
 );
 has 'no_post_task' => ( is => 'rw' );
@@ -40,10 +41,10 @@ has 'result_dir' => ( is => 'rw', lazy_build => 1 );
 has 'log_dir'    => ( is => 'rw', lazy_build => 1 );
 has 'idx_dir'    => ( is => 'rw', lazy_build => 1 );
 has 'test'       => ( is => 'rw' );
-has 'notify'       => ( is => 'rw' );
-has 'no_prompt'   => ( is => 'rw' );
-has 'lib'         => ( is => 'rw' );
-has 'script_dir'  => ( is => 'ro', default => $FindBin::Bin );
+has 'notify'     => ( is => 'rw' );
+has 'no_prompt'  => ( is => 'rw' );
+has 'lib'        => ( is => 'rw' );
+has 'script_dir' => ( is => 'ro', default    => $Bin );
 
 has 'input' => ( is => 'rw', isa => 'ArrayRef', default => sub { [] } );
 
@@ -64,7 +65,7 @@ has 'submit_bin'          => ( is => 'rw', default    => 'qsub' );
 has 'submit_params'       => ( is => 'rw', default    => sub { [] }, isa => 'ArrayRef[Str]' );
 has 'perl_bin'            => ( is => 'rw', default    => $Config{perlpath} );
 has 'working_dir'         => ( is => 'rw', default    => '.' );
-has 'prefix_output_dirs' => ( is => 'rw' );
+has 'prefix_output_dirs'  => ( is => 'rw', default    => 1 );
 
 # arguments for the cluster script
 has 'args' => ( is => 'rw', isa => 'ArrayRef[Str]', default => sub { [] } );

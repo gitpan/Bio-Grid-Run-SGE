@@ -11,13 +11,14 @@ use Bio::Grid::Run::SGE::Util::ExampleEnvironment;
 my $hold_idx = firstidx { $_ eq '-hold_jid' } @ARGV;
 splice @ARGV, $hold_idx, 2 if ( $hold_idx >= 0 );
 
-our ( $opt_N, $opt_S, $opt_e, $opt_o, $opt_t );
-getopt('N:S:e:o:t:');
+our ( $opt_N, $opt_S, $opt_e, $opt_o, $opt_t, $opt_l );
+getopt('N:S:e:o:t:l:');
 
 my $name    = $opt_N // 'test_job';
 my $shell   = $opt_S;
 my $err_dir = $opt_e;
 my $out_dir = $opt_o;
+
 
 my $job_id = time;
 

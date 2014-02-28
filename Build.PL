@@ -17,7 +17,7 @@ my %module_build_args = (
     "Joachim Bargsten <jwb\@cpan.org>"
   ],
   "dist_name" => "Bio-Grid-Run-SGE",
-  "dist_version" => "0.0382",
+  "dist_version" => "0.0383",
   "license" => "perl",
   "module_name" => "Bio::Grid::Run::SGE",
   "recommends" => {},
@@ -62,12 +62,12 @@ my %module_build_args = (
     "bin/rocksblast",
     "bin/test_sendmail.pl",
     "bin/qtime-dist",
+    "bin/qfake.pl",
     "bin/distribution",
     "bin/cat.pl",
     "bin/cat_by_regex.pl",
     "bin/jclone",
     "bin/bgrs-notify.pl",
-    "bin/qfake.pl",
     "bin/dummy_worker.pl",
     "bin/qstat-jwb"
   ],

@@ -101,9 +101,9 @@ sub peek_comb_idx {
 
 __PACKAGE__->meta->make_immutable;
 
-1;
-
 __END__
+
+=pod
 
 =head1 NAME
 
@@ -111,28 +111,92 @@ __END__
 
 =head1 SYNOPSIS
 
-  my $index = Bio::Grid::Run::SGE::Index->new( format => 'Dummy', idx_file => undef )->create;
+    use Bio::Grid::Run::SGE::Iterator::Consecutive;
+    use Bio::Grid::Run::SGE::Index;
 
-  my $it = Bio::Grid::Run::SGE::Iterator::Consecutive->new( indices => [$index] );
+    # the dummy index contains the letters a..c as elements
+    my $index = Bio::Grid::Run::SGE::Index->new( format => 'Dummy', idx_file => undef, idx => [ 'a'..'c'] )->create;
 
-  # iterate from combinations 3 to 8
-  $it->start( [ 3, 8 ] );
+    my $it = Bio::Grid::Run::SGE::Iterator::Consecutive->new( indices => [$index] );
 
-  my @result;
-  while ( my $combination = $it->next_comb ) {
-    push @result, $comb->[0];
-  }
+    # run through all combinations
+    my ($from, $to) = (0, $it->num_comb - 1);
+    $it->start( [ $from, $to]  );
+
+    my @result;
+    my $i = $from;
+    while ( my $comb = $it->next_comb ) {
+      print "job " . $i++ . " -> " . $comb->[0] . "\n";
+    }
+
 
 =head1 DESCRIPTION
 
-This is the simplest iterator, it runs through a range of elements in an index.
+This is the simplest iterator, it runs through a range of elements in an
+index. It takes exactly one index. Results in C<N> opeations with N as number of elements in the index.
 
-=head1 ADDITIONAL METHODS
+=head2 ITERATION SCHEME
 
-This index inherits methods from L<Bio::Grid::Run::SGE::Role::Iterable>. See
-documentation at L<Bio::Grid::Run::SGE::Role::Iterable> for more information.
+An index with elements (a..c) combines to 3 jobs:
 
-Only additional methods are documented here.
+  job 1 -> a
+  job 2 -> b
+  job 3 -> c
+
+=head2 CONFIGURATION
+
+  ---
+  ...
+  mode: Consecutive
+  ...
+
+=head2 COMPLETE EXAMPLE
+
+=head3 CONFIG FILE
+
+    ---
+    input:
+      - format: List
+        elements: [ "a", "b", "c" ]
+    job_name: Consecutive_test
+    mode: Consecutive
+
+=head3 CLUSTER SCRIPT
+
+    #!/usr/bin/env perl
+
+    use warnings;
+    use strict;
+    use 5.010;
+
+    use Bio::Grid::Run::SGE;
+    use File::Spec::Functions qw(catfile);
+    use Bio::Grid::Run::SGE::Util qw(result_files);
+
+    run_job(
+      task => \&do_worker_stuff
+    );
+
+    sub do_worker_stuff {
+      my ( $c, $result_prefix, $elems_a ) = @_;
+
+      # write results to result prefix (== result file)
+      open my $fh, '>', $result_prefix or die "Can't open filehandle: $!";
+
+      # because we have a list index, $elems_a is an array reference
+      # other indices might give file names instead, so check the documentation
+
+      my $num_elems = @$elems_a;
+      for ( my $i = 0; $i < @$elems_a; $i++ ) {
+        say $fh $elems_a->[$i];
+      }
+      $fh->close;
+
+      # return 1 on success
+      return 1;
+    }
+
+    1;
 
 =head1 SEE ALSO
 

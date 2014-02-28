@@ -38,7 +38,7 @@ sub notify {
       MSG("Sending message to $dest");
       my $immsg = AnyEvent::XMPP::IM::Message->new(
         to      => $dest,
-        subject => $info->{subject},
+        #subject => $info->{subject},
         body    => $info->{message},
         type    => $self->type,
       );
