@@ -88,7 +88,7 @@ use File::Spec;
 %EXPORT_TAGS = (ALL => [qw($Bin $Script $RealBin $RealScript $Dir $RealDir)]);
 @ISA = qw(Exporter);
 
-$VERSION = "1.51";
+our $VERSION = '0.0384'; # VERSION
 
 
 # needed for VMS-specific filename translation

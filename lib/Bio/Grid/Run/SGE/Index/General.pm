@@ -12,7 +12,7 @@ use Bio::Gonzales::Util::File qw/open_on_demand is_newer/;
 use Data::Dumper;
 use Cwd qw/fastcwd/;
 
-our $VERSION = 0.01_01;
+our $VERSION = '0.0384'; # VERSION
 
 has 'sep' => ( is => 'rw', required => 1, isa => 'Str' );
 has 'sep_pos' => ( is => 'rw', default => '^' );

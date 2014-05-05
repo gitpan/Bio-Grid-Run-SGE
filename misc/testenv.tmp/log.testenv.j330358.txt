@@ -1,9 +1,0 @@
-[Wed Jan  8 18:35:59 2014][330358] testenv (bargs001@cluster)
-
-main log file: /home/bargs001/Bio-Grid-Run-SGE/misc/testenv.tmp/log.testenv.j330358.txt
-
-working dir: /home/bargs001/Bio-Grid-Run-SGE/misc
-result dir: /home/bargs001/Bio-Grid-Run-SGE/misc/testenv.result
-tmp dir: /home/bargs001/Bio-Grid-Run-SGE/misc/testenv.tmp
-
-all nodes finished successfully

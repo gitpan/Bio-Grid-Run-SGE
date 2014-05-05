@@ -9,8 +9,7 @@ use Bio::Grid::Run::SGE::Util qw/my_glob my_sys INFO run_job/;
 use Bio::Grid::Run::SGE::Master;
 
 run_job( { pre_task => \&do_master_stuff, task => \&do_worker_stuff } );
-#WICHTIG: explicit exit 
-exit;
+1;
 
 sub do_master_stuff {
     my ($c) = @_;

@@ -17,7 +17,7 @@ my %module_build_args = (
     "Joachim Bargsten <jwb\@cpan.org>"
   ],
   "dist_name" => "Bio-Grid-Run-SGE",
-  "dist_version" => "0.0383",
+  "dist_version" => "0.0384",
   "license" => "perl",
   "module_name" => "Bio::Grid::Run::SGE",
   "recommends" => {},
@@ -53,23 +53,23 @@ my %module_build_args = (
     "parent" => 0
   },
   "script_files" => [
-    "bin/cl_muscle_example.pl",
-    "bin/log2debug.pl",
     "bin/mail.pl",
-    "bin/mail.sh",
-    "bin/qtime",
-    "bin/rmrex",
-    "bin/rocksblast",
-    "bin/test_sendmail.pl",
-    "bin/qtime-dist",
-    "bin/qfake.pl",
-    "bin/distribution",
-    "bin/cat.pl",
     "bin/cat_by_regex.pl",
-    "bin/jclone",
-    "bin/bgrs-notify.pl",
     "bin/dummy_worker.pl",
-    "bin/qstat-jwb"
+    "bin/test_sendmail.pl",
+    "bin/qstat-jwb",
+    "bin/cl_muscle_example.pl",
+    "bin/qfake.pl",
+    "bin/rmrex",
+    "bin/distribution",
+    "bin/mail.sh",
+    "bin/jclone",
+    "bin/cat.pl",
+    "bin/rocksblast",
+    "bin/log2debug.pl",
+    "bin/qtime-dist",
+    "bin/qtime",
+    "bin/bgrs-notify.pl"
   ],
   "test_requires" => {
     "Test::More" => 0

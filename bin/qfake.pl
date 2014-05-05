@@ -7,6 +7,7 @@ use List::MoreUtils qw/firstidx/;
 
 use Getopt::Std;
 use Bio::Grid::Run::SGE::Util::ExampleEnvironment;
+use Capture::Tiny 'capture';
 
 my $hold_idx = firstidx { $_ eq '-hold_jid' } @ARGV;
 splice @ARGV, $hold_idx, 2 if ( $hold_idx >= 0 );
@@ -43,7 +44,7 @@ if ($opt_t) {
       )
       };
     my @cmd = ( $opt_S, @ARGV );
-    system(@cmd) == 0 or die "system @cmd failed: $?";
+    sys_redirect(\@cmd, $ENV{SGE_STDOUT_PATH}, $ENV{SGE_STDERR_PATH}) == 0 or die "system @cmd failed: $?";
   }
 } else {
   %ENV = %{
@@ -60,10 +61,28 @@ if ($opt_t) {
     };
 
   my @cmd = ( $opt_S, @ARGV );
-  system(@cmd) == 0 or die "system @cmd failed: $?";
+  sys_redirect(\@cmd, $ENV{SGE_STDOUT_PATH}, $ENV{SGE_STDERR_PATH}) == 0 or die "system @cmd failed: $?";
 
 }
 say "Your job $job_id (\"$name\") has been submitted";
+
+sub sys_redirect {
+  my ($cmd_args, $stdout_f, $stderr_f) = @_;
+
+  my ( $stdout, $stderr, $exit ) = capture {
+    system(@$cmd_args);
+  };
+
+  open my $ofh, '>', $stdout_f or die "Can't open filehandle: $!";
+  print $ofh $stdout;
+  close $ofh;
+
+  open my $efh, '>', $stderr_f or die "Can't open filehandle: $!";
+  print $efh $stderr;
+  close $efh;
+
+  return $exit;
+}
 
 #array
 #qsub

@@ -17,7 +17,7 @@ use Bio::Gonzales::Util::Cerial;
 
 use Sys::Hostname;
 
-our $VERSION = 0.01_01;
+our $VERSION = '0.0384'; # VERSION
 
 has config_file         => ( is => 'rw', required   => 1 );
 has c                   => ( is => 'rw', required   => 1 );

@@ -22,7 +22,7 @@ use Config;
 use FindBinNew qw($Bin $Script);
 FindBinNew::again();
 
-our $VERSION = 0.01_01;
+our $VERSION = '0.0384'; # VERSION
 
 has 'cmd' => (
   is       => 'rw',
@@ -344,14 +344,15 @@ EOS
       if ( @inc_dirs && @inc_dirs > 0 );
   }
 
-  print $fh 'my $cmd = shift;',                        "\n";
-  print $fh 'unless ( my $return = do $cmd ) {',       "\n";
-  print $fh '  warn "could not parse $cmd $@" if $@;', "\n";
-  # not necessary
-  print $fh '  warn "could not do $cmd $!" unless defined $return;', "\n";
-  print $fh '  warn "could not run $cmd" unless $return;',           "\n";
-  print $fh '}',                                                     "\n";
-  print $fh 'exit;',                                                 "\n";
+  print $fh <<'EOF';
+  my $cmd = shift;
+  unless ( my $return = do $cmd ) {
+    warn "could not parse $cmd\n$@\n\n$!" if $@;
+    warn "couldn't execute $cmd\n$!" unless defined $return;
+    warn "couldn't run $cmd" unless $return;
+  }
+  exit;
+EOF
   $fh->close;
 
   return $self->_worker_env_script;

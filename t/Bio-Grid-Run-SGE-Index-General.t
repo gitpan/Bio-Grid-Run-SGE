@@ -9,6 +9,8 @@ use Carp;
 
 BEGIN { use_ok('Bio::Grid::Run::SGE::Index::General'); }
 
+$Bio::Gonzales::Seq::IO::WIDTH = 60;
+
 my $td = tempdir( CLEANUP => 1 );
 
 my $idx = Bio::Grid::Run::SGE::Index::General->new(

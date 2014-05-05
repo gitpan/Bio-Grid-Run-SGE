@@ -25,7 +25,7 @@ run_job(
         post_task     => \&concat_files,
     }
 );
-exit;
+1;
 
 sub do_master_stuff {
     my ($cc) = @_;

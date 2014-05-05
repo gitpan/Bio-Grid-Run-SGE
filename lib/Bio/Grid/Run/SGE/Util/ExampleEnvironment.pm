@@ -12,7 +12,7 @@ use 5.010;
 
 use base 'Exporter';
 our ( @EXPORT, @EXPORT_OK, %EXPORT_TAGS );
-our $VERSION = 0.01_01;
+our $VERSION = '0.0384'; # VERSION
 
 @EXPORT      = qw(get_array_env get_single_env);
 %EXPORT_TAGS = ();

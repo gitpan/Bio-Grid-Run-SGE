@@ -29,7 +29,7 @@ run_job(
     }
 );
 
-exit;
+1;
 
 =head1 NAME
 

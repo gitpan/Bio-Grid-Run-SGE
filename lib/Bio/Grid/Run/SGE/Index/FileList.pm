@@ -11,7 +11,7 @@ use File::Slurp;
 
 extends 'Bio::Grid::Run::SGE::Index::List';
 
-our $VERSION = 0.01_01;
+our $VERSION = '0.0384'; # VERSION
 
 around 'create' => sub {
   my $orig = shift;

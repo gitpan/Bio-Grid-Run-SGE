@@ -29,7 +29,7 @@ my $m = Bio::Grid::Run::SGE::Master->new(
   working_dir      => $td,
   submit_bin       => 't/Bio-Grid-Run-SGE-Master.qsub.pl',
   cmd              => ['t/Bio-Grid-Run-SGE-Master.script.pl'],
-  perl_bin         => 'perl',
+  perl_bin         => $^X,
   input            => [ { format => 'General', sep => '^>', files => ['t/data/test.fa'], } ],
   use_stdin        => 1,
   result_on_stdout => 1,
@@ -50,8 +50,8 @@ $run_output_ref->{input}[0]{idx_file} = catfile( $td, 'idx/cluster_job.0.idx' );
 $run_output_ref->{job_cmd}             =~ s!/tmp/lXGH5pgD5r!$td!g;
 $run_output_ref->{_worker_config_file} =~ s!/tmp/lXGH5pgD5r!$td!g;
 my $curdir = fastcwd;
-$run_output_ref->{job_cmd}  =~ s!PERL!perl!g;
-$run_output_ref->{perl_bin} =~ s!PERL!perl!g;
+$run_output_ref->{job_cmd}  =~ s!PERL!$^X!g;
+$run_output_ref->{perl_bin} =~ s!PERL!$^X!g;
 $run_output_ref->{stdout_dir} = catfile( $td, 'cluster_job.tmp', 'out' );
 $run_output_ref->{idx_dir} = catfile( $td, 'idx' );
 $run_output_ref->{script_dir} = rel2abs('t');
@@ -72,7 +72,7 @@ is_deeply(
   $qsub_argv,
   [
     '-t', '1-45',
-    '-S', 'perl',
+    '-S', $^X,
     '-N', 'cluster_job',
     '-e', catfile( $td, 'cluster_job.tmp/err' ),
     '-o', catfile( $td, 'cluster_job.tmp/out' ),

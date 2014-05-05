@@ -47,4 +47,4 @@ EXAMPLE CONFIG:
 EOF
 
 }
-exit;
+1;

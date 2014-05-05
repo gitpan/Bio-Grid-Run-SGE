@@ -1,2 +1,0 @@
-#NODE: 2; NO_LOG
-cd '/home/bargs001/Bio-Grid-Run-SGE/tmp_test/0d9izggm1b' && /home/bargs001/Bio-Grid-Run-SGE/bin/qfake.pl -S /home/bargs001/perl5/perlbrew/perls/perl-5.14.2/bin/perl -N test_env -e /home/bargs001/Bio-Grid-Run-SGE/tmp_test/0d9izggm1b/tmp/err -o /home/bargs001/Bio-Grid-Run-SGE/tmp_test/0d9izggm1b/tmp/out /home/bargs001/Bio-Grid-Run-SGE/tmp_test/0d9izggm1b/tmp/env.test_env.pl /home/bargs001/Bio-Grid-Run-SGE/scripts/cl_env.pl --worker /home/bargs001/Bio-Grid-Run-SGE/tmp_test/0d9izggm1b/tmp/test_env.config.dat --job_id 1385745003 --id 2

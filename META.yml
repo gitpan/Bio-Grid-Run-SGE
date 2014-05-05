@@ -43,4 +43,6 @@ requires:
   URI: 0
   XML::LibXML: 0
   parent: 0
-version: 0.0383
+resources:
+  repository: git://github.com/jwbargsten/bio-grid-run-sge.git
+version: 0.0384

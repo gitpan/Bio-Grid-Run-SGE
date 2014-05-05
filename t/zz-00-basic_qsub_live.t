@@ -10,8 +10,17 @@ use File::Spec;
 use File::Slurp qw/read_dir/;
 use List::Util;
 use Cwd qw/fastcwd/;
+use File::Which;
 
-BEGIN { use_ok('Bio::Grid::Run::SGE'); }
+BEGIN {
+  my $qsub = which('qsub');
+
+  unless ($qsub) {
+    plan skip_all => 'This test requires qsub';
+  }
+
+  use_ok('Bio::Grid::Run::SGE');
+}
 
 my $cl_env = File::Spec->rel2abs("scripts/cl_env.pl");
 

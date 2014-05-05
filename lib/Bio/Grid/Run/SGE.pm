@@ -25,7 +25,7 @@ use Scalar::Util qw/blessed/;
 use base 'Exporter';
 
 our ( @EXPORT, @EXPORT_OK, %EXPORT_TAGS );
-our $VERSION = 0.01_01;
+our $VERSION = '0.0384'; # VERSION
 
 @EXPORT      = qw(run_job INFO my_sys my_sys_non_fatal my_glob);
 %EXPORT_TAGS = ();
@@ -234,8 +234,15 @@ Bio::Grid::Run::SGE - Distribute (biological) analyses on the local SGE grid
 
 =head1 SYNOPSIS
 
-You want to distribute computational tasks on the cluster nodes. A simple
-example would be to calculate the reverse complement of
+Bio::Grid::Run::SGE lets you distribute a computational task on cluster nodes. 
+
+Imagine you want to run a pipeline (a concatenation of several tasks) in
+parallel. This is usually no problem, you have plenty of frameworks to do
+this. B<However, if ONE task of your pipeline is so big that it is necessary to
+split it up into multiple I<subtasks>, then Bio::Grid::Run::SGE may be
+extemely useful.>
+
+A simple example would be to calculate the reverse complement of
 10,000,000,000,000,000,000 sequences in a FASTA file in a distributed fashion.
 
 To run it with Bio::Grid::Run::SGE, you need
@@ -254,7 +261,9 @@ On the commandline this looks like:
 
     $ perl ./cl_script_with_task.pl job_configuration.conf.yml
     
-To continue with the example of the reverse complement:
+To continue with the example of the reverse complement (don't worry, the
+example does not use 10,000,000,000,000,000,000 sequences, but only the human
+CDS sequences):
 
 First, create a perl script F<cl_reverse_complement.pl> that executes the
 analysis in the Bio::Grid::Run::SGE environment. 
@@ -291,7 +300,7 @@ analysis in the Bio::Grid::Run::SGE environment.
       }
     );
 
-    exit;
+    1;
 
 Second, download sequences and create a config file F<rc_human.conf.yml> (YAML
 format) to specify file names and pipeline parameters.
@@ -372,7 +381,7 @@ containing data chunks and additional log information.
 
 =over 4
 
-=item L<Writing cluster scripts|Bio::Grid::Run::SGE::ClusterScripts>
+=item L<Writing cluster scripts|Bio::Grid::Run::SGE::ClusterScript>
 
 =item L<Writing configuration files|Bio::Grid::Run::SGE::Config>
 
@@ -396,7 +405,7 @@ containing data chunks and additional log information.
 
 =item L<Job state notifications|Bio::Grid::Run::SGE::Log::Notify>
 
-=item L<Running other (e.g. Python) scripts|Bio::Grid::Run::SGE::ClusterScripts/OTHER>
+=item L<Running other (e.g. Python) scripts|Bio::Grid::Run::SGE::ClusterScript/OTHER>
 
 =back
 
