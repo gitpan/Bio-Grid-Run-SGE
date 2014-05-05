@@ -22,7 +22,7 @@ use Config;
 use FindBinNew qw($Bin $Script);
 FindBinNew::again();
 
-our $VERSION = '0.0384'; # VERSION
+our $VERSION = '0.0385'; # VERSION
 
 has 'cmd' => (
   is       => 'rw',

@@ -15,7 +15,7 @@ use IO::Handle;
 
 use Cwd qw/fastcwd/;
 
-our $VERSION = '0.0384'; # VERSION
+our $VERSION = '0.0385'; # VERSION
 
 has [qw/config_file task/] => ( is => 'rw', required => 1 );
 has [qw/range _part_size/] => ( is => 'rw' );

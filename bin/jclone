@@ -10,7 +10,7 @@ use Pod::Usage;
 use File::Copy;
 use File::Spec;
 
-our $VERSION = '0.0384'; # VERSION
+our $VERSION = '0.0385'; # VERSION
 my %opt;
 
 # sections needed: NAME, SYNOPSIS, DESCRIPTION
