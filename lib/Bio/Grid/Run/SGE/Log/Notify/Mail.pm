@@ -9,7 +9,7 @@ use Carp;
 use 5.010;
 use Bio::Grid::Run::SGE::Util qw/my_glob MSG/;
 
-our $VERSION = '0.0385'; # VERSION
+our $VERSION = '0.0386'; # VERSION
 use Mail::Sendmail;
 
 has smtp_server => ( is => 'rw' );

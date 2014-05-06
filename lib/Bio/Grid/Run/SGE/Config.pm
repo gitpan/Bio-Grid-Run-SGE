@@ -12,7 +12,7 @@ use Config::Auto;
 use Bio::Gonzales::Util::Cerial;
 use Bio::Grid::Run::SGE::Master;
 
-our $VERSION = '0.0385'; # VERSION
+our $VERSION = '0.0386'; # VERSION
 
 has 'job_config_file' => ( is => 'rw' );
 has 'cluster_script_setup' => ( is => 'rw', default => sub { {} } );

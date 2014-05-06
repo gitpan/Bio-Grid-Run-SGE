@@ -25,7 +25,7 @@ use Scalar::Util qw/blessed/;
 use base 'Exporter';
 
 our ( @EXPORT, @EXPORT_OK, %EXPORT_TAGS );
-our $VERSION = '0.0385'; # VERSION
+our $VERSION = '0.0386'; # VERSION
 
 @EXPORT      = qw(run_job INFO my_sys my_sys_non_fatal my_glob);
 %EXPORT_TAGS = ();
