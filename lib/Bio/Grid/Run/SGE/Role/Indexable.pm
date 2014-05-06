@@ -8,7 +8,7 @@ use strict;
 use Storable qw/nstore retrieve/;
 use Bio::Grid::Run::SGE::Util qw/my_glob/;
 
-our $VERSION = '0.0386'; # VERSION
+our $VERSION = '0.0387_01'; # VERSION
 
 requires qw/num_elem create get_elem type close/;
 

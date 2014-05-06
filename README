@@ -1,13 +1,4 @@
+Bio::Grid::Run::SGE - Distribute (biological) analyses on the local SGE grid
 
 
-This archive contains the distribution Bio-Grid-Run-SGE,
-version 0.0386:
-
-  Distribute (biological) analyses on the local SGE grid
-
-This software is copyright (c) 2014 by Joachim Bargsten.
-
-This is free software; you can redistribute it and/or modify it under
-the same terms as the Perl 5 programming language system itself.
-
-
+Documentation is at https://metacpan.org/pod/Bio::Grid::Run::SGE

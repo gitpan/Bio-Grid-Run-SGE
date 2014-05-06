@@ -5,7 +5,7 @@ use Mouse;
 use warnings;
 use strict;
 
-our $VERSION = '0.0386'; # VERSION
+our $VERSION = '0.0387_01'; # VERSION
 
 
 has cur_comb_idx => ( is => 'rw', lazy_build => 1 );

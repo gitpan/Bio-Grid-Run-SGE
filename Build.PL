@@ -17,7 +17,7 @@ my %module_build_args = (
     "Joachim Bargsten <jwb\@cpan.org>"
   ],
   "dist_name" => "Bio-Grid-Run-SGE",
-  "dist_version" => "0.0386",
+  "dist_version" => "0.0387_01",
   "license" => "perl",
   "module_name" => "Bio::Grid::Run::SGE",
   "recommends" => {},
@@ -50,7 +50,8 @@ my %module_build_args = (
     "Try::Tiny" => 0,
     "URI" => 0,
     "XML::LibXML" => 0,
-    "parent" => 0
+    "parent" => 0,
+    "perl" => "5.010"
   },
   "script_files" => [
     "bin/mail.pl",

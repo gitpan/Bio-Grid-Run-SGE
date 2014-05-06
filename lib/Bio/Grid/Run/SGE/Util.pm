@@ -14,7 +14,7 @@ use List::Util qw/min/;
 
 use base 'Exporter';
 our ( @EXPORT, @EXPORT_OK, %EXPORT_TAGS );
-our $VERSION = '0.0386'; # VERSION
+our $VERSION = '0.0387_01'; # VERSION
 
 @EXPORT      = qw();
 %EXPORT_TAGS = ();

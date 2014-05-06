@@ -11,7 +11,7 @@ use File::Slurp;
 
 with 'Bio::Grid::Run::SGE::Role::Indexable';
 
-our $VERSION = '0.0386'; # VERSION
+our $VERSION = '0.0387_01'; # VERSION
 
 sub BUILD {
   my ($self) = @_;

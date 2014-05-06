@@ -43,6 +43,8 @@ requires:
   URI: 0
   XML::LibXML: 0
   parent: 0
+  perl: 5.010
 resources:
+  homepage: https://metacpan.org/release/Bio-Grid-Run-SGE
   repository: git://github.com/jwbargsten/bio-grid-run-sge.git
-version: 0.0386
+version: 0.0387_01

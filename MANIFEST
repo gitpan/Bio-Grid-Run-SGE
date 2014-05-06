@@ -1,4 +1,5 @@
 Build.PL
+Changes
 LICENSE
 MANIFEST
 META.yml
@@ -60,9 +61,6 @@ misc/bio-sge-combine-allvsall-norep.pl
 misc/test.pl
 misc/testenv.conf.yml
 perf/test.pl
-perf/test.pl.orig
-perf/test.pl.rej
-pref-test.pl.patch
 scripts/cl_blast-existing-db.pl
 scripts/cl_blast_all-vs-all
 scripts/cl_dummy.pl
@@ -80,7 +78,6 @@ scripts/cl_run_single.pl
 scripts/cl_syntax_error.pl
 scripts/env.qsub.sh
 scripts/record_qsub_env.pl
-t-Bio-Grid-Run-SGE-Worker.patch
 t/00-basic_qfake.t
 t/00-basic_qfake_err.t
 t/00-basic_qfake_syntax_error.t
@@ -117,6 +114,7 @@ t/data/Bio-Grid-Run-SGE-Index-General.range-45-47-2.ref.fa
 t/data/Bio-Grid-Run-SGE-Index-General.range-chunky-0-2.ref.fa
 t/data/Bio-Grid-Run-SGE-Master_run.yml
 t/data/test.fa
+t/lib/Test/Util.pm
 t/manifest.t
 t/pod-coverage.t
 t/pod.t
@@ -127,4 +125,3 @@ t/testrun/conf.pl
 t/testrun/test.fa
 t/zz-00-basic_qsub_live.t
 templateconf.yml
-test.pl.patch
